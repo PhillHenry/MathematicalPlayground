@@ -17,14 +17,14 @@ def bivariate_distn(mu1, mu2, s1, s2, range1, range2):
 
 if __name__ == "__main__":
     step = .2
-    X = np.arange(-5., 5., step)
-    Y = np.arange(-5., 5., step)
+    X = np.arange(-3, 3, step)
+    Y = np.arange(-3, 3, step)
     X, Y = np.meshgrid(X, Y)
-    Z = np.sqrt(gaussian(X, 0, 1) + gaussian(Y, 0, 1))
+    Z = np.sqrt(gaussian(X, 0, 1) * gaussian(Y, 0, 1))
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='hot', linewidth=0, antialiased=False)
-    ax.set_zlim(-1.01, 1.01)
+    ax.set_zlim(0, 0.5)
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
     plt.show()
