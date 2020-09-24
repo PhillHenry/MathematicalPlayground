@@ -7,7 +7,7 @@ def gaussian(xs, mu, s):
     return stats.norm.pdf(xs, loc=mu, scale=s)
 
 
-def mvn(mu1, mu2, o1, o2, xs, ys):
+def joint(mu1, mu2, o1, o2, xs, ys):
     return gaussian(xs, mu1, o1) * gaussian(ys, mu2, o2)
 
 
@@ -16,7 +16,7 @@ def mvn(mu1, mu2, o1, o2, xs, ys):
 if __name__ == "__main__":
     support = np.arange(-3, 3, .2)
     xs, ys = np.meshgrid(support, support)
-    zs = mvn(0, 0, 1, 1, xs, ys)
+    zs = joint(0, 0, 1, 1, xs, ys)
 
     fig = plt.figure()
     ax = fig.gca(projection='3d')
