@@ -7,24 +7,16 @@ def gaussian(xs, mu, s):
     return stats.norm.pdf(xs, loc=mu, scale=s)
 
 
-def bivariate_distn(mu1, mu2, s1, s2, range1, range2):
-    x1 = np.linspace(min(range1), max(range1))
-    x2 = np.linspace(min(range2), max(range2))
-    p1 = gaussian(x1, mu1, s1)
-    p2 = gaussian(x2, mu2, s2)
-    return p1 * p2
-
-
-if __name__ == "__main__":
+if __name__ == "__main__":  # graphics taken from https://stackoverflow.com/questions/11766536/matplotlib-3d-surface-from-a-rectangular-array-of-heights
     step = .2
     X = np.arange(-3, 3, step)
     Y = np.arange(-3, 3, step)
     X, Y = np.meshgrid(X, Y)
-    Z = np.sqrt(gaussian(X, 0, 1) * gaussian(Y, 0, 1))
+    Z = gaussian(X, 0, 1) * gaussian(Y, 0, 1)
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='hot', linewidth=0, antialiased=False)
-    ax.set_zlim(0, 0.5)
+    ax.set_zlim(0, 0.3)
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
     plt.show()
