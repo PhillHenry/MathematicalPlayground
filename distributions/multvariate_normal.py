@@ -7,16 +7,21 @@ def gaussian(xs, mu, s):
     return stats.norm.pdf(xs, loc=mu, scale=s)
 
 
-if __name__ == "__main__":  # graphics taken from https://stackoverflow.com/questions/11766536/matplotlib-3d-surface-from-a-rectangular-array-of-heights
-    step = .2
-    X = np.arange(-3, 3, step)
-    Y = np.arange(-3, 3, step)
-    X, Y = np.meshgrid(X, Y)
-    Z = gaussian(X, 0, 1) * gaussian(Y, 0, 1)
+def mvn(mu1, mu2, o1, o2, xs, ys):
+    return gaussian(xs, mu1, o1) * gaussian(ys, mu2, o2)
+
+
+# graphics taken from
+# https://stackoverflow.com/questions/11766536/matplotlib-3d-surface-from-a-rectangular-array-of-heights
+if __name__ == "__main__":
+    support = np.arange(-3, 3, .2)
+    xs, ys = np.meshgrid(support, support)
+    zs = mvn(0, 0, 1, 1, xs, ys)
+
     fig = plt.figure()
     ax = fig.gca(projection='3d')
-    surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='hot', linewidth=0, antialiased=False)
-    ax.set_zlim(0, 0.3)
+    surf = ax.plot_surface(xs, ys, zs, rstride=1, cstride=1, cmap='hot', linewidth=0, antialiased=False)
+    ax.set_zlim(np.min(zs), np.max(zs))
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
     plt.show()
