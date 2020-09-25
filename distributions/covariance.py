@@ -12,6 +12,6 @@ def covariance_of(xs):
     :return: the covariance matrix
     """
     averaged = xs - mean_of(xs)
-    np.dot(averaged, averaged.T)
+    return np.dot(averaged, averaged.T)
 
 
