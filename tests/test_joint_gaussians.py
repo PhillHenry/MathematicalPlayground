@@ -7,7 +7,7 @@ def test_gaussian():
     assert joint_gaussians.gaussian([0], 0, 1) == 1. / (2 * pi) ** 0.5
 
 
-def test_joint():
+def test_joint_matrix_shape():
     n = 10
     support = np.arange(0, 10)
     xs, ys = np.meshgrid(support, support)
