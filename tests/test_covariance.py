@@ -12,4 +12,7 @@ def test_covariance_of_row_vector():
     xs = np.asmatrix([1, 2, 3, 4])
     m = to_test.covariance_of(xs)
     assert(np.shape(m) == (len(xs), len(xs)))
+    for i in range(len(xs)):
+        assert(m[i, i] == 1.)
+
 
