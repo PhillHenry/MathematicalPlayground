@@ -1,5 +1,5 @@
-from math import pi
 import numpy as np
+
 import distributions.covariance as to_test
 
 xs = [1, 2, 3, 4]
