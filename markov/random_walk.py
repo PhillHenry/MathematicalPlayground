@@ -1,7 +1,8 @@
-import numpy as np
-import markov.matrices as mat
 import matplotlib.pyplot as plt
-import distributions.covariance as cov
+import numpy as np
+
+import markov.matrices as mat
+
 
 # see https://stephens999.github.io/fiveMinuteStats/normal_markov_chain.html
 
@@ -27,9 +28,18 @@ if __name__ == "__main__":
     save_plot("/tmp/random_work.png")
 
     # heat map of the covariance of a
-    c = cov.covariance_of(np.asmatrix(x))
+    c = np.cov(a)
     heatmap = plt.imshow(c, cmap='hot', interpolation='nearest')
     plt.colorbar(heatmap)
-    plt.show()
+    plt.title("Covariance matrix")
+    save_plot("/tmp/covariance.png")
+
+    # heat map of precision matrix
+    p = np.linalg.inv(c + (np.eye(n) * 1e-10))  # condition the covariance matrix
+    # p = pd_inv(c)
+    heatmap = plt.imshow(p[:10, :10], cmap='hot', interpolation='nearest')
+    plt.colorbar(heatmap)
+    plt.title("Precision matrix")
+    save_plot("/tmp/precision.png")
 
 
