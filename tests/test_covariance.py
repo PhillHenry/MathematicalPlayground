@@ -8,15 +8,17 @@ m = np.stack((v + 1, v - 1))
 
 
 def test_mean_of_col_vector():
-    assert(to_test.mean_of(v.T) == 2.5)
+    mean = to_test.row_mean_of(v.T)
+    assert np.array_equal(mean, v.T), "actual = {}".foramt(mean)
 
 
 def test_mean_of_row_vector():
-    assert(np.array_equal(to_test.mean_of(v), v))
+    assert to_test.row_mean_of(v) == 2.5
 
 
 def test_mean_of_matrix():
-    assert(np.array_equal(to_test.mean_of(m), v))
+    mean = to_test.row_mean_of(m)
+    assert np.array_equal(mean.T, np.asmatrix([3.5, 1.5]))
 
 
 def _test_covariance_of_row_vector():
@@ -30,6 +32,7 @@ def test_covariance_of_matrix():
     c = to_test.covariance_of(m)
     l = m.shape[0]
     assert(np.shape(c) == (l, l))
+    assert np.allclose(c, np.cov(m)), "c\n{}\nnumpy.cov:\n{}".format(c, np.cov(m))
     for i in range(l):
         for j in range(l):
             if i != j:
