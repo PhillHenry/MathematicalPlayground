@@ -1,5 +1,5 @@
 import numpy as np
-
+import math as math
 import distributions.covariance as to_test
 
 xs = [1, 2, 3, 4]
@@ -21,11 +21,11 @@ def test_mean_of_matrix():
     assert np.array_equal(mean.T, np.asmatrix([3.5, 1.5]))
 
 
-def _test_covariance_of_row_vector():
+def test_covariance_of_row_vector():
     c = to_test.covariance_of(v)
-    assert(np.shape(c) == (len(xs), len(xs)))
+    assert(np.shape(c) == (1, 1))
     for i in range(len(v)):
-        assert(c[i, i] == 1.)
+        assert math.isclose(c[i, i], (np.std(v, ddof=1) ** 2), abs_tol=1e-8)
 
 
 def test_covariance_of_matrix():
