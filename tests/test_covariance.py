@@ -25,7 +25,8 @@ def test_covariance_of_row_vector():
     c = to_test.covariance_of(v)
     assert(np.shape(c) == (1, 1))
     for i in range(len(v)):
-        assert math.isclose(c[i, i], (np.std(v, ddof=1) ** 2), abs_tol=1e-8)
+        variance = np.std(v, ddof=1) ** 2
+        assert math.isclose(c[i, i], variance, abs_tol=1e-8)
 
 
 def test_covariance_of_matrix():

@@ -10,9 +10,6 @@ def row_mean_of(xs):
 
 def covariance_of(xs):
     r"""
-    See https://jakevdp.github.io/blog/2015/07/06/model-complexity-myth/ for the mathematical
-    underpinning of conditioning a matrix.
-
     :param xs: array-like object of values
     :return: the covariance matrix
     """
