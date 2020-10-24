@@ -9,7 +9,7 @@ m = np.stack((v + 1, v - 1))
 
 def test_mean_of_col_vector():
     mean = to_test.row_mean_of(v.T)
-    assert np.array_equal(mean, v.T), "actual = {}".foramt(mean)
+    assert np.array_equal(mean, v.T), "actual = {}".format(mean)
 
 
 def test_mean_of_row_vector():
@@ -26,7 +26,7 @@ def test_covariance_of_row_vector():
     assert(np.shape(c) == (1, 1))
     for i in range(len(v)):
         variance = np.std(v, ddof=1) ** 2
-        assert math.isclose(c[i, i], variance, abs_tol=1e-8)
+        assert math.isclose(c[i, i], variance, abs_tol=1e-8)  # Think Stats, p108
 
 
 def test_covariance_of_matrix():
