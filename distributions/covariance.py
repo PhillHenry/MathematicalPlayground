@@ -1,6 +1,8 @@
 import numpy as np
 import random as random
 import matplotlib.pyplot as plt
+import graphics.files as f
+import matrix.ops as ops
 
 
 def row_mean_of(xs):
@@ -29,9 +31,10 @@ if __name__ == "__main__":
     m = np.asmatrix(np.stack(rows))
     print("m is of dimensions: ", np.shape(m))
     c = covariance_of(m)
-    heatmap = plt.imshow(c, cmap='hot', interpolation='nearest')
+    p = ops.condition_and_invert(c)
+    heatmap = plt.imshow(p, cmap='hot', interpolation='nearest')
     plt.colorbar(heatmap)
-    plt.title("Covariance matrix")
-    plt.show()
+    plt.title("Precision matrix")
+    f.save_plot("/tmp/class_precision.png")
 
 
