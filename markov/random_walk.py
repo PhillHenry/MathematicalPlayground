@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+
 import graphics.files as f
 import matrix.matrices as mat
-
 
 # see https://stephens999.github.io/fiveMinuteStats/normal_markov_chain.html
 
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     f.save_plot("/tmp/covariance.png")
 
     # heat map of precision matrix
-    p = np.linalg.inv(c + (np.eye(n) * 1e-20))  # condition the covariance matrix
+    p = np.linalg.inv(c)  # condition the covariance matrix
     # p = pd_inv(c)
     heatmap = plt.imshow(p[:10, :10], cmap='hot', interpolation='nearest')
     plt.colorbar(heatmap)
