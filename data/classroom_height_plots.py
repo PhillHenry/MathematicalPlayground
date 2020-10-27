@@ -1,12 +1,11 @@
-import graphics.heatmap as g
-import distributions.covariance as cov
-import graphics.files as f
-import matrix.ops as ops
-from data.ClassroomHeights import ClassroomHeights
-import numpy as np
-import distributions.covariance as cov
 import random as r
 
+import numpy as np
+
+import distributions.covariance as cov
+import graphics.files as f
+import graphics.heatmap as g
+from data.ClassroomHeights import ClassroomHeights
 
 if __name__ == "__main__":
     d = ClassroomHeights(10, 100)
@@ -23,7 +22,7 @@ if __name__ == "__main__":
             print("new_row = {}".format(new_row))
             rows.append(np.asmatrix(new_row))
         else:
-            rows.append(row)
+            rows.append(row - cov.row_mean_of(row))
     c = cov.squared_with_bessel(np.asmatrix(np.stack(rows)))
 
     p = np.linalg.inv(c)
