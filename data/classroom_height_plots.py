@@ -3,12 +3,20 @@ import distributions.covariance as cov
 import graphics.files as f
 import matrix.ops as ops
 from data.ClassroomHeights import ClassroomHeights
+import numpy as np
 
 
 if __name__ == "__main__":
     d = ClassroomHeights(10, 100)
     c = cov.covariance_of(d.m)
-    p = ops.condition_and_invert(c)
+    (height, width) = np.shape(c)
+    # add some dependency
+    for i in range(10):
+        x = int(np.random.uniform(0, height))
+        y = int(np.random.uniform(0, width))
+        c[x, y] = 0.
+        c[y, x] = 0.
+    p = np.linalg.inv(c)
 
     g.add_heatmap(d.m, "Data")
     f.save_plot("/tmp/class_data.png")
