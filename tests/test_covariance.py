@@ -1,10 +1,24 @@
 import numpy as np
 import math as math
 import distributions.covariance as to_test
+from data.ClassroomHeights import ClassroomHeights
+
 
 xs = [1, 2, 3, 4]
 v = np.asmatrix(xs)
 m = np.stack((v + 1, v - 1))
+
+
+def test_matrix_centred_on_mean_has_dat_0():
+    d = ClassroomHeights(10, 10)
+    rows = []
+    n_rows = np.shape(d.m)[0]
+    for i in range(n_rows):
+        row = d.m[i, :]
+        mean = to_test.row_mean_of(row)
+        rows.append(row - mean)
+    m = np.asmatrix(np.stack(rows))
+    assert math.isclose(np.linalg.det(m), 0., abs_tol=1e-4)
 
 
 def test_mean_of_col_vector():
