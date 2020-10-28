@@ -2,6 +2,7 @@ import numpy as np
 import math as math
 import distributions.covariance as to_test
 from data.ClassroomHeights import ClassroomHeights
+import pytest
 
 
 xs = [1, 2, 3, 4]
@@ -18,7 +19,7 @@ def test_matrix_centred_on_mean_has_dat_0():
         mean = to_test.row_mean_of(row)
         rows.append(row - mean)
     m = np.asmatrix(np.stack(rows))
-    assert math.isclose(np.linalg.det(m), 0., abs_tol=1e-4)
+    assert math.isclose(np.linalg.det(m), 0., abs_tol=1e-3)
 
 
 def test_mean_of_col_vector():
@@ -52,3 +53,10 @@ def test_covariance_of_matrix():
         for j in range(l):
             if i != j:
                 assert(c[i, j] <= c[i, i])
+
+
+def test_mean_centred_matrix_needs_conditioning():
+    x = to_test.row_mean_of(m)
+    with pytest.raises(Exception) as e:
+        np.linalg.inv(x)
+        pytest.fail(e)
