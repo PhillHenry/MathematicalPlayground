@@ -19,13 +19,17 @@ if __name__ == "__main__":
             mean = cov.row_mean_of(ignore_1)
             centred = ignore_1 - mean
             new_row = np.append([0.], centred)
-            print("new_row = {}".format(new_row))
             rows.append(np.asmatrix(new_row))
         else:
             rows.append(row - cov.row_mean_of(row))
-    c = cov.squared_with_bessel(np.asmatrix(np.stack(rows)))
+    c = cov.squared_with_bessel(np.asmatrix(np.stack(rows)).T)
 
     p = np.linalg.inv(c)
+
+    (ws, vs) = np.linalg.eig(c)
+    print('Number of eigenvalues = '.format(len(ws)))
+    for w in ws:
+        print('eigenvalue = {}'.format(w))
 
     g.add_heatmap(d.m, "Data")
     f.save_plot("/tmp/class_data.png")
