@@ -13,12 +13,17 @@ def bootstrap(data, n, n_samples):
     return xs
 
 
-if __name__ == "__main__":
+def gaussian_data():
     mu = 0.
     sd = 1.
     n = 25
+    return np.random.normal(mu, sd, n)
+
+
+if __name__ == "__main__":
+    data = gaussian_data()
     n_boots = 10000
-    data = np.random.normal(mu, sd, n)
+    n = len(data)
     boot = bootstrap(data, n_boots, n)
 
     print("sample mean: %20f" % np.mean(data))
