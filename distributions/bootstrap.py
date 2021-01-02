@@ -20,9 +20,20 @@ def gaussian_data():
     return np.random.normal(mu, sd, n)
 
 
+def confidence_interval_of(xs, interval):
+    n = len(xs)
+    xs = sorted(xs)
+    ignore_width = int(n * (interval / 100) / 2)
+    first = xs[ignore_width]
+    last = xs[n - ignore_width - 1]
+    return first, last
+
+
 if __name__ == "__main__":
-    data = gaussian_data()
-    n_boots = 10000
+    data = [0.9351491569390402, 0.9421977556637731, 0.9387062566277836,
+            0.9475262368815592, 0.9456567352077213, 0.9437367303609342,
+            0.947907949790795, 0.9440574203082119, 0.9464398235664776]
+    n_boots = 100000
     n = len(data)
     boot = bootstrap(data, n_boots, n)
 
@@ -33,6 +44,10 @@ if __name__ == "__main__":
     boot_sd = [np.std(x) for x in boot]
     print("bootstrap mean mean: %12f" % np.mean(boot_means))
     print("bootstrap mean sd:   %12f" % np.mean(boot_sd))
+
+    ci = 95
+    ci_low, ci_high = confidence_interval_of(boot_means, ci)
+    print("{}% confidence interval of mean  = [{}, {}]".format(ci, ci_low, ci_high))
 
     fig, (ax1, ax2) = plt.subplots(2)
     ax1.hist(data, bins='auto')
