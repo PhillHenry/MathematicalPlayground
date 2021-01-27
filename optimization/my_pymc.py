@@ -2,6 +2,8 @@ import pymc3 as pm
 import numpy as np
 import theano.tensor as T
 
+import matplotlib.pyplot as plt
+
 
 # see https://en.wikipedia.org/wiki/Himmelblau%27s_function
 def himmelblau(x, y):
@@ -17,4 +19,10 @@ if __name__ == "__main__":
         step1 = pm.Metropolis(vars=[p, x, y])
         trace = pm.sample(2000, step=[step1])
 
-    print(list(trace))
+    traces = list(trace)
+    print(traces)
+    xs = list(map(lambda t: t["x"], traces))
+    ys = list(map(lambda t: t["y"], traces))
+    f, ax1 = plt.subplots(1, 1, sharey=False)
+    ax1.scatter(xs, ys, s=2, cmap='jet')
+    plt.show()
