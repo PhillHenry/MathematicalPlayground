@@ -78,18 +78,10 @@ class LogLike(T.Op):
         self.data = data
 
     def perform(self, node, inputs, outputs):
-        # the method that is used when calling the Op
-
         theta, = inputs  # this will contain my variables
-
-        # print("inputs = {}".format(inputs))
-        # print("len(inputs) = {}".format(len(inputs)))
-        # print("len(theta) = {}".format(len(theta)))
         x, y = theta
-        # print("x = {}, y = {}".format(x, y))
-
-        # call the log-likelihood function
         logl = self.likelihood(x, y)
+        print("x = {}, y = {}, logl = {}".format(x, y, logl))
 
         outputs[0][0] = np.array(logl)  # output the log-likelihood
 
@@ -107,17 +99,17 @@ def explore_himmelblau(lim, x_label, y_label, z_label):
 
 
 def gradient(lim, x_label, y_label, z_label, x, m):
-    fn = lambda x, y: himmelblau(x, y)
+    fn = lambda x, y: -himmelblau(x, y)
     logl = LogLike(fn, x, m)
     with pm.Model() as my_model:
-        grid_x = pm.Uniform(x_label, -lim, lim)
-        grid_y = pm.Uniform(y_label, -lim, lim)
+        grid_x = pm.Uniform(x_label, lower=-lim, upper=lim)
+        grid_y = pm.Uniform(y_label, lower=-lim, upper=lim)
         theta = T.as_tensor_variable([grid_x, grid_y])
         theano_m = _shared(m)
         p = pm.DensityDist(z_label, lambda v: logl(v), observed=theta)
         normal_dist = stats.norm(loc=0, scale=1.)
         # pm.DensityDist(z_label, lambda x: x, observed=np.random.randn(100))
-        trace = pm.sample(100000, tune=10000, discard_tuned_samples=True)
+        trace = pm.sample(10000, tune=130, discard_tuned_samples=True)
 
     return list(trace)
 
@@ -136,11 +128,12 @@ if __name__ == "__main__":
     m = true_himmelblau(lim, step)
     heat_map_of(m, step, ax1)
 
-    support = np.arange(0, 10)
-    mesh = np.meshgrid(support, support)
-    line = np.linspace(-5, 5., 100)
+    support = np.arange(-lim, lim, (2 * lim) / step)
+    mesh = [(x, y) for x in range(-lim, lim) for y in range(-lim, lim)]
+    mesh = mesh[len(mesh)//4:] + mesh[:len(mesh)//4]
 
     traces = gradient(lim, x_label, y_label, z_label, mesh, m)
+    print("mesh = {}".format(mesh))
 
     print("sample traces = {}".format(traces[:5]))
     xs = extract(x_label, traces)
