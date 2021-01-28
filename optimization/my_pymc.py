@@ -8,6 +8,11 @@ import matplotlib.pyplot as plt
 
 
 # see https://en.wikipedia.org/wiki/Himmelblau%27s_function
+# It has one local maximum at x=-0.270845, y=-0.923039 where f(x,y)=181.617 and four identical local minima:
+# f(3.0,2.0)=0.0
+# f(-2.805118,3.131312)=0.0
+# f(-3.779310,-3.283186)=0.0
+# f(3.584428,-1.848126)=0.0
 def himmelblau(x, y):
     # print("x = {}, y ={}".format(x, y))
     return (x ** 2 + y - 11) ** 2 + (x + y**2 - 7)**2
@@ -21,10 +26,8 @@ def true_himmelblau(lim, step):
     grid_coords = [(x, y) for x in range(step) for y in range(step)]
     m = np.zeros([step, step])
 
-
     def grid_coord_for(coord):
         return (coord / (2 * lim)) - lim
-
 
     for grid_x, grid_y in grid_coords:
         coord_x = grid_coord_for(grid_x)
@@ -38,7 +41,6 @@ def true_himmelblau(lim, step):
 
 def heat_map_of(m, side, ax):
     heatmap = ax.imshow(m, cmap='hot', interpolation='nearest')
-    # plt.colorbar(heatmap)
     ax.set_title("True Contours")
     ticks = list(map(lambda x: str(x), np.arange(-lim, lim)))
     tick_pos = list(range(0, side, side // len(ticks)))
@@ -47,9 +49,9 @@ def heat_map_of(m, side, ax):
     ax.set_xticklabels(ticks)
     ax.set_yticklabels(ticks)
 
-# define a theano Op for our likelihood function
-class LogLike(T.Op):
 
+# define a theano Op for our likelihood function
+class TheanoOp(T.Op):
     """
     Specify what type of object will be passed and returned to the Op when it is
     called. In our case we will be passing it a vector of values (the parameters
@@ -81,8 +83,7 @@ class LogLike(T.Op):
         theta, = inputs  # this will contain my variables
         x, y = theta
         logl = self.likelihood(x, y)
-        print("x = {}, y = {}, logl = {}".format(x, y, logl))
-
+        # print("x = {}, y = {}, logl = {}".format(x, y, logl))
         outputs[0][0] = np.array(logl)  # output the log-likelihood
 
 
@@ -99,17 +100,14 @@ def explore_himmelblau(lim, x_label, y_label, z_label):
 
 
 def gradient(lim, x_label, y_label, z_label, x, m):
-    fn = lambda x, y: -himmelblau(x, y)
-    logl = LogLike(fn, x, m)
+    loss_fn = lambda x, y: -himmelblau(x, y)
+    theano_op = TheanoOp(loss_fn, x, m)
     with pm.Model() as my_model:
         grid_x = pm.Uniform(x_label, lower=-lim, upper=lim)
         grid_y = pm.Uniform(y_label, lower=-lim, upper=lim)
         theta = T.as_tensor_variable([grid_x, grid_y])
-        theano_m = _shared(m)
-        p = pm.DensityDist(z_label, lambda v: logl(v), observed=theta)
-        normal_dist = stats.norm(loc=0, scale=1.)
-        # pm.DensityDist(z_label, lambda x: x, observed=np.random.randn(100))
-        trace = pm.sample(10000, tune=130, discard_tuned_samples=True)
+        p = pm.DensityDist(z_label, lambda v: theano_op(v), observed=theta)
+        trace = pm.sample(30000, tune=10000, discard_tuned_samples=True)
 
     return list(trace)
 
@@ -135,7 +133,7 @@ if __name__ == "__main__":
     traces = gradient(lim, x_label, y_label, z_label, mesh, m)
     print("mesh = {}".format(mesh))
 
-    print("sample traces = {}".format(traces[:5]))
+    print("sample of {} traces = {}".format(len(traces), traces[:5]))
     xs = extract(x_label, traces)
     ys = extract(y_label, traces)
     # cs = extract(z_label, traces)
@@ -144,6 +142,5 @@ if __name__ == "__main__":
     ax2.plot(xs, ys)
     ax2.set_title("Traces")
 
-    # _ = pm.traceplot(traces, lines=((x_label, {}, [0.1]), (y_label, {}, [0.1])))
-
+    plt.savefig("/tmp/metropolis.png")
     plt.show()
