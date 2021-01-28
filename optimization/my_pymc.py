@@ -10,19 +10,61 @@ def himmelblau(x, y):
     return (x ** 2 + y - 11) ** 2 + (x + y**2 - 7)**2
 
 
-if __name__ == "__main__":
-    with pm.Model() as my_model:
-        x = pm.Uniform("x", -10, 10)
-        y = pm.Uniform("y", -10, 10)
-        p = pm.Deterministic("obs", himmelblau(x, y))
+def extract(name, traces):
+    return list(map(lambda t: t[name], traces))
 
-        step1 = pm.Metropolis(vars=[p, x, y])
+
+if __name__ == "__main__":
+    x_label = "x"
+    y_label = "y"
+    z_label = "obs"
+
+    lim = 5
+
+    f, (ax1, ax2) = plt.subplots(2, 1, sharey=False)
+
+    step = 100
+    grid_coords = [(x, y) for x in range(step) for y in range(step)]
+    m = np.zeros([step, step])
+
+
+    def grid_coord_for(coord):
+        return (coord / (2 * lim)) - lim
+
+
+    for grid_x, grid_y in grid_coords:
+        coord_x = grid_coord_for(grid_x)
+        coord_y = grid_coord_for(grid_y)
+        z = himmelblau(coord_x, coord_y)
+        # print("x = {}, y = {}, z = {}".format(coord_x, coord_y, z))
+        m[grid_x, grid_y] = z
+
+    heatmap = ax1.imshow(m, cmap='hot', interpolation='nearest')
+    # plt.colorbar(heatmap)
+    ax1.set_title("True Contours")
+    ticks = list(map(lambda x: str(x), np.arange(-lim, lim)))
+    tick_pos = list(range(0, step, step // len(ticks)))
+    ax1.set_xticks(tick_pos)
+    ax1.set_yticks(tick_pos)
+    ax1.set_xticklabels(ticks)
+    ax1.set_yticklabels(ticks)
+
+    with pm.Model() as my_model:
+        grid_x = pm.Uniform(x_label, -lim, lim)
+        grid_y = pm.Uniform(y_label, -lim, lim)
+        p = pm.Deterministic(z_label, himmelblau(grid_x, grid_y))
+
+        step1 = pm.Metropolis(vars=[p, grid_x, grid_y])
         trace = pm.sample(2000, step=[step1])
 
     traces = list(trace)
     print(traces)
-    xs = list(map(lambda t: t["x"], traces))
-    ys = list(map(lambda t: t["y"], traces))
-    f, ax1 = plt.subplots(1, 1, sharey=False)
-    ax1.scatter(xs, ys, s=2, cmap='jet')
+    xs = extract(x_label, traces)
+    ys = extract(y_label, traces)
+    cs = extract(z_label, traces)
+
+    ax2.scatter(xs, ys, s=2, cmap='jet', c=cs)
+    ax2.set_title("Traces")
+
+
     plt.show()
