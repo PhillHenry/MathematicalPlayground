@@ -20,7 +20,10 @@ def compare_gaussian_to_exponentials(n=1000):
 if __name__ == "__main__":
     n_trials = 100
     trials = list(map(lambda _: compare_gaussian_to_exponentials(), range(0, n_trials)))
-    metrics, xs, ys = [*np.transpose(trials)]
+    arr = np.empty(n_trials, object)
+    arr[:] = trials
+    m = np.asarray([*arr], object)
+    metrics, xs, ys = np.transpose(m)
     tps = np.array([*metrics])
     print(np.shape(tps))
     # print(tps)

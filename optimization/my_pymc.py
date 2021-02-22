@@ -104,7 +104,7 @@ def gradient(lim, x_label, y_label, z_label, x, m):
         grid_y = pm.Uniform(y_label, lower=-lim, upper=lim)
         theta = T.as_tensor_variable([grid_x, grid_y])
         p = pm.DensityDist(z_label, lambda v: theano_op(v), observed=theta)
-        trace = pm.sample(60, tune=0, n_init=0, discard_tuned_samples=True)
+        trace = pm.sample(30000, tune=10000, discard_tuned_samples=True)
 
     return list(trace)
 
