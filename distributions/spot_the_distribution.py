@@ -4,8 +4,12 @@ import matplotlib.pyplot as plt
 from scipy.stats import ks_2samp
 
 
-using_kolmogorov_smirnov = lambda: compare_gaussian_to_exponentials_using(kolmogorov_smirnov_comparison)
-using_t_test = lambda: compare_gaussian_to_exponentials_using(t_test_comparison)
+def using_kolmogorov_smirnov():
+    return compare_gaussian_to_exponentials_using(kolmogorov_smirnov_comparison)
+
+
+def using_t_test():
+    return compare_gaussian_to_exponentials_using(t_test_comparison)
 
 
 def t_test_comparison(a, b):
@@ -42,6 +46,7 @@ def make_comparison(n_trials, fn):
     metrics, xs, ys = np.transpose(m)
     return metrics, xs, ys
 
+
 def t_test(n_trials=100):
     metrics, xs, ys = make_comparison(n_trials, using_t_test)
     tps = np.array([*metrics])
@@ -54,6 +59,5 @@ def kolmogorov_smirnov(n_trials=100):
 
 
 if __name__ == "__main__":
-    n_trials = 100
-    ps, xs, ys = t_test(n_trials)
-    plot(ps, xs, ys, "t-test")
+    ps, xs, ys = kolmogorov_smirnov(100)
+    plot(ps, xs, ys, "KS")
