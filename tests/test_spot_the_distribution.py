@@ -4,7 +4,7 @@ import numpy as np
 
 def test_compare_gaussian_to_exponentials():
     n = 10
-    comparison, xs, ys = to_test.compare_gaussian_to_exponentials(n)
+    comparison, xs, ys = to_test.t_test_gaussian_to_exponentials(n)
     assert(len(xs) == n)
     assert(len(ys) == n)
 
