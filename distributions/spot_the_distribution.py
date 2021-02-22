@@ -4,13 +4,11 @@ from scipy import stats
 
 def compare_tstats(a, b):
     t2, p2 = stats.ttest_ind(a, b, equal_var=False)
-    # print("t = " + str(t2))
-    # print("p = " + str(p2))  # ie, probability of accepting the null hypothesis that the distributions are different
     return t2, p2
 
 
 def compare_gaussian_to_exponentials():
-    n = 10
+    n = 1000
     gaussians = np.random.normal(10, 1, n)
     # print(gaussians)
 
@@ -27,5 +25,5 @@ if __name__ == "__main__":
     print(np.shape(tps))
     # print(tps)
     mean_p = np.mean(tps[:, 1])
-    print("mean p = {}".format(mean_p))
+    print("mean p = {}".format(mean_p))  # higher means more likely to be the same distribution
 
