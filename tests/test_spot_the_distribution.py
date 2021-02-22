@@ -4,7 +4,7 @@ import numpy as np
 
 def test_compare_gaussian_to_exponentials():
     n = 10
-    comparison, xs, ys = to_test.t_test_gaussian_to_exponentials(n)
+    comparison, xs, ys = to_test.make_comparison(n, to_test.using_t_test)
     assert(len(xs) == n)
     assert(len(ys) == n)
 
@@ -15,6 +15,6 @@ def test_compare_kolmogorov_smirnov():
     x = np.random.normal(0, 1, n)
     y = np.random.normal(0, 1, n)
     z = np.random.normal(1.1, 0.9, n)
-    assert(to_test.compare_kolmogorov_smirnov(x, y) > 0.05)
+    assert(to_test.kolmogorov_smirnov_comparison(x, y) > 0.05)
 
 

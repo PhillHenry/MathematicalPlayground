@@ -4,16 +4,20 @@ import matplotlib.pyplot as plt
 from scipy.stats import ks_2samp
 
 
-def compare_tstats(a, b):
+using_kolmogorov_smirnov = lambda: compare_gaussian_to_exponentials_using(kolmogorov_smirnov_comparison)
+using_t_test = lambda: compare_gaussian_to_exponentials_using(t_test_comparison)
+
+
+def t_test_comparison(a, b):
     t2, p2 = stats.ttest_ind(a, b, equal_var=False)
     return t2, p2
 
 
-def compare_kolmogorov_smirnov(a, b):
+def kolmogorov_smirnov_comparison(a, b):
     return ks_2samp(a, b).pvalue
 
 
-def compare_gaussian_to_exponentials(fn, n=1000):
+def compare_gaussian_to_exponentials_using(fn, n=1000):
     gaussians = np.random.normal(10, 1, n)
     exponentials = np.random.exponential(10, n)
     return fn(gaussians, exponentials), gaussians, exponentials
@@ -38,17 +42,14 @@ def make_comparison(n_trials, fn):
     metrics, xs, ys = np.transpose(m)
     return metrics, xs, ys
 
-
 def t_test(n_trials=100):
-    fn = lambda: compare_gaussian_to_exponentials(compare_tstats)
-    metrics, xs, ys = make_comparison(n_trials, fn)
+    metrics, xs, ys = make_comparison(n_trials, using_t_test)
     tps = np.array([*metrics])
     return tps[:, 1], xs, ys
 
 
 def kolmogorov_smirnov(n_trials=100):
-    fn = lambda: compare_gaussian_to_exponentials(compare_kolmogorov_smirnov)
-    ps, xs, ys = make_comparison(n_trials, fn)
+    ps, xs, ys = make_comparison(n_trials, using_kolmogorov_smirnov)
     return ps, xs, ys
 
 
