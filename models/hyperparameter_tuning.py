@@ -13,13 +13,14 @@ class LGTuner(object):
 
     def objective(self, args):
         alpha = args
+        print("alpha = {}".format(alpha))
         reg = ElasticNet(alpha=alpha).fit(xs, ys)
         return reg.score(xs, ys)
 
     def tune(self):
         space = hp.choice('a',
                           [
-                              ('alpha', hp.uniform('alpha', 0, 1.0))
+                              hp.uniform('alpha', 0, 1.0)
                           ])
         best = fmin(self.objective, space, algo=tpe.suggest, max_evals=100)
         return best
