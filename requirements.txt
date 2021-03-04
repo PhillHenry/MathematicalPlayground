@@ -13,3 +13,4 @@ pydot
 graphviz
 pytest
 sympy
+hyperopt
