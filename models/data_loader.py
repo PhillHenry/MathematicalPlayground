@@ -7,6 +7,7 @@ def parse_line(xs):
     return elements
 
 
+# Apparently, sklearn.datasets.load_svmlight_file will do this
 def load_svm_file(file):
     print("Loading {}".format(file))
     actual = []
