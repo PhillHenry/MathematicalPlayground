@@ -136,7 +136,7 @@ if __name__ == "__main__":
     # cs = extract(z_label, traces)
 
     # ax2.scatter(xs, ys, s=2, cmap='jet', c=cs)
-    ax2.plot(xs, ys)
+    ax2.plot_histograms(xs, ys)
     ax2.set_title("Traces")
 
     plt.savefig("/tmp/metropolis.png")
