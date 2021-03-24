@@ -22,7 +22,7 @@ def euclidean_distances_between(point, others):
     b = np.array(point)
     for x in others:
         a = np.array(x)
-        ds.append(np.linalg.norm(a - b))
+        ds.append(np.linalg.norm(a - b, ord=1))
     return ds
 
 
@@ -34,16 +34,21 @@ def euclidean_distances(xs, ys):
 
 
 if __name__ == "__main__":
-    n_dimensions = 20
+    n_dimensions = 2000
     low = 0
     high = 100
     centroid1 = np.random.uniform(low, high, n_dimensions)
     centroid2 = np.random.uniform(low, high, n_dimensions)
     n_neighbours = 10
-    stdev = (high - low) / 100
+    stdev = (high - low) / 10
     neighbourhood1 = perturbations(centroid1, n_neighbours, stdev)
     neighbourhood2 = perturbations(centroid2, n_neighbours, stdev)
 
-    print("mean distance in neighbourhood1 = {}".format(np.mean(euclidean_distances(neighbourhood1, neighbourhood1))))
-    print("mean distance in neighbourhood2 = {}".format(np.mean(euclidean_distances(neighbourhood2, neighbourhood2))))
-    print("mean distance between neighbourhoods = {}".format(np.mean(euclidean_distances(neighbourhood1, neighbourhood2))))
+    mean_neighbourhood1 = np.mean(euclidean_distances(neighbourhood1, neighbourhood1))
+    mean_neighbourhood2 = np.mean(euclidean_distances(neighbourhood2, neighbourhood2))
+    mean_intra_neighbourhoods = np.mean(euclidean_distances(neighbourhood1, neighbourhood2))
+    print("mean distance in neighbourhood1 = {}".format(mean_neighbourhood1))
+    print("mean distance in neighbourhood2 = {}".format(mean_neighbourhood2))
+    print("mean distance between neighbourhoods = {}".format(mean_intra_neighbourhoods))
+    print("ratio of means {} and {}".format(mean_neighbourhood1/mean_intra_neighbourhoods, mean_neighbourhood2/mean_intra_neighbourhoods))
+
