@@ -25,7 +25,7 @@ def kolmogorov_smirnov_comparison(a, b):
 
 def compare_gaussian_to_exponentials_using(fn, support=np.arange(1, 20, 0.2)):
     gaussians = norm(loc=10, scale=1).cdf(support)
-    exponentials = expon(10).cdf(support)
+    exponentials = norm(loc=10, scale=1).cdf(support)
 
     return fn(gaussians, exponentials), gaussians, exponentials
 
@@ -84,5 +84,5 @@ def kolmogorov_smirnov(support, n_trials=100):
 
 if __name__ == "__main__":
     over = np.arange(1, 20, 0.2)
-    ps, xs, ys = t_test(over, 100)
-    plot(ps, xs, ys, over, "t-test")
+    ps, xs, ys = kolmogorov_smirnov(over, 100)
+    plot(ps, xs, ys, over, "KS")

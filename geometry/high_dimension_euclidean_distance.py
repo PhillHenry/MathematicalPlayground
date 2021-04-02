@@ -59,9 +59,9 @@ def make_neighbourhoods(n_dimensions, low, high, n_neighbours, stdev):
 
 
 if __name__ == "__main__":
-    low = 0
-    high = 100
-    n_neighbours = 100
+    low = 0.
+    high = 1.
+    n_neighbours = 30
     stdev = (high - low) / 5
     n_samples = 30
 
