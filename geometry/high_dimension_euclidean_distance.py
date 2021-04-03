@@ -11,10 +11,15 @@ def perturb(basis, stddev):
     return perturbed
 
 
+def normalize(xs):
+    return xs / np.linalg.norm(xs)
+
+
 def perturbations(centroid, n_vecs, stddev):
     vectors = []
     for _ in range(n_vecs):
         vectors.append(perturb(centroid, stddev))
+    # return normalize(vectors)
     return vectors
 
 
@@ -51,10 +56,6 @@ def calc_distances(neighbourhood1, neighbourhood2, origin):
     mean_neighbourhood1 = np.mean(distances_neighbourhood1)
     mean_neighbourhood2 = np.mean(distances_neighbourhood2)
     mean_intra_neighbourhoods = np.mean(distances_intra)
-    # print("mean distance in neighbourhood1      = {} max = {}".format(mean_neighbourhood1, np.max(distances_neighbourhood1)))
-    # print("mean distance in neighbourhood2      = {} max = {}".format(mean_neighbourhood2, np.max(distances_neighbourhood2)))
-    # print("mean distance between neighbourhoods = {} min = {}".format(mean_intra_neighbourhoods, np.min(distances_intra)))
-    # print("ratio of means {} and {}".format(mean_neighbourhood1/mean_intra_neighbourhoods, mean_neighbourhood2/mean_intra_neighbourhoods))
     return mean_neighbourhood1, mean_neighbourhood2, mean_intra_neighbourhoods
 
 
@@ -77,7 +78,7 @@ def display_results():
 
     all_results = []
 
-    for n_dimensions in range(3, 24, 2):
+    for n_dimensions in range(3, 51, 2):
         means1 = []
         means2 = []
         intras = []
