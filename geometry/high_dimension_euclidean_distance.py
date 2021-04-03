@@ -33,14 +33,15 @@ def euclidean_distances(xs, ys):
     ds = []
     for x in xs:
         ds.append(euclidean_distances_between(x, ys))
-    return ds
+    flattened = [item for sublist in ds for item in sublist]
+    return flattened
 
 
 def distances_between(xs, ys, origin):
     if origin is None:
         return euclidean_distances(xs, ys)
     else:
-        euclidean_distances(xs, origin)
+        return euclidean_distances(xs, origin)
 
 
 def calc_distances(neighbourhood1, neighbourhood2, origin):
@@ -80,7 +81,7 @@ def display_results():
         means1 = []
         means2 = []
         intras = []
-        origin = None  # [0] * n_dimensions
+        origin = [[0] * n_dimensions]
         for _ in range(n_samples):
             neighbourhood1, neighbourhood2 = make_neighbourhoods(n_dimensions, low, high, n_neighbours, stdev)
             mean1, mean2, mean_intra = calc_distances(neighbourhood1, neighbourhood2, origin)
