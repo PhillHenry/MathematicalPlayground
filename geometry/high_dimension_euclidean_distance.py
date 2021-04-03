@@ -36,9 +36,16 @@ def euclidean_distances(xs, ys):
     return ds
 
 
-def calc_distances(neighbourhood1, neighbourhood2):
-    distances_neighbourhood1 = euclidean_distances(neighbourhood1, neighbourhood1)
-    distances_neighbourhood2 = euclidean_distances(neighbourhood2, neighbourhood2)
+def distances_between(xs, ys, origin):
+    if origin is None:
+        return euclidean_distances(xs, ys)
+    else:
+        euclidean_distances(xs, origin)
+
+
+def calc_distances(neighbourhood1, neighbourhood2, origin):
+    distances_neighbourhood1 = distances_between(neighbourhood1, neighbourhood1, origin)
+    distances_neighbourhood2 = distances_between(neighbourhood2, neighbourhood2, origin)
     distances_intra = euclidean_distances(neighbourhood1, neighbourhood2)
     mean_neighbourhood1 = np.mean(distances_neighbourhood1)
     mean_neighbourhood2 = np.mean(distances_neighbourhood2)
@@ -58,7 +65,7 @@ def make_neighbourhoods(n_dimensions, low, high, n_neighbours, stdev):
     return neighbourhood1, neighbourhood2
 
 
-if __name__ == "__main__":
+def display_results():
     low = 0.
     high = 1.
     n_neighbours = 30
@@ -73,9 +80,10 @@ if __name__ == "__main__":
         means1 = []
         means2 = []
         intras = []
+        origin = None  # [0] * n_dimensions
         for _ in range(n_samples):
             neighbourhood1, neighbourhood2 = make_neighbourhoods(n_dimensions, low, high, n_neighbours, stdev)
-            mean1, mean2, mean_intra = calc_distances(neighbourhood1, neighbourhood2)
+            mean1, mean2, mean_intra = calc_distances(neighbourhood1, neighbourhood2, origin)
             means1.append(mean1)
             means2.append(mean2)
             intras.append(mean_intra)
@@ -83,10 +91,14 @@ if __name__ == "__main__":
         mu2 = np.mean(means2)
         mu_intras = np.mean(intras)
         mean_ratio = (mu1 + mu2) / (2 * mu_intras)
-        print("{}-dimensions: mean neighbourhoods #1 = {}, #2 = {}, mean intras = {}, mean ratios = {}".
+        print("{:3d}-dimensions: mean neighbourhoods #1 = {:05f}, #2 = {:05f}, mean intras = {:05f}, mean ratios = {:05f}".
               format(n_dimensions, mu1, mu2, mu_intras, mean_ratio))
         results = [n_dimensions, mu1, mu2, mu_intras, mean_ratio]
         all_results.append(",".join(map(lambda x: str(x), results)))
+    print("number_dimensions,mean_distance_cluster_1,mean_distance_cluster_2,mean_distance_intra_cluster,average_intra_vs_inter_disntance")
     for x in all_results:
         print(x)
 
+
+if __name__ == "__main__":
+    display_results()
