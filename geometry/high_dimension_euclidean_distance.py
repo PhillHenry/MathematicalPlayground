@@ -19,8 +19,8 @@ def perturbations(centroid, n_vecs, stddev):
     vectors = []
     for _ in range(n_vecs):
         vectors.append(perturb(centroid, stddev))
-    # return normalize(vectors)
-    return vectors
+    return normalize(vectors)
+    # return vectors
 
 
 def euclidean_distances_between(point, others):
@@ -78,7 +78,7 @@ def display_results():
 
     all_results = []
 
-    for n_dimensions in range(3, 51, 2):
+    for n_dimensions in range(2, 100):
         means1 = []
         means2 = []
         intras = []

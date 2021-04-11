@@ -28,6 +28,10 @@ class LGTuner(object):
 
 
 if __name__ == "__main__":
+    """
+    Run against SVM data such as:
+    /home/henryp/Code/Scala/MyCode/spark/data/mllib/sample_linear_regression_data.txt
+    """
     file = sys.argv[1]
     xs, ys = load_svm_file(file)
     tuner = LGTuner(xs, ys)
