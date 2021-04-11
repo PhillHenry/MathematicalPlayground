@@ -33,9 +33,9 @@ def find_ratios():
         print("dimension,min,max,ratio", file=file)
         xs = []
         ys = []
-        for d in range(2, 30):
-            min_distance, max_distance = min_max_distances_between(make_vectors(d, 30))
-            ratio = (max_distance - min_distance) / max_distance
+        for d in range(2, 100):
+            min_distance, max_distance = min_max_distances_between(make_vectors(d, 100))
+            ratio = min_distance / max_distance
             print("d = {}, min = {}, max = {}, ratio = {}".format(d, min_distance, max_distance, ratio))
             print(f"{d},{min_distance},{max_distance},{ratio}", file=file)
             xs.append(d)
@@ -43,7 +43,7 @@ def find_ratios():
     plt.plot(xs, ys)
     plt.xlabel("Dimensions")
     plt.ylabel("Ratios")
-    plt.title("Ratios of [min-max]/max for uniform distributed points")
+    plt.title("min/max distances for uniform distributed points")
     plt.show()
 
 
