@@ -1,4 +1,3 @@
-import random
 import numpy as np
 from scipy.spatial import distance
 import matplotlib.pyplot as plt

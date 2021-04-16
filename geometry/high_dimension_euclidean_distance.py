@@ -1,6 +1,7 @@
 import numpy as np
 import random
 from scipy.spatial import distance
+import matplotlib.pyplot as plt
 
 
 def perturb(basis, stddev):
@@ -77,6 +78,8 @@ def display_results():
     print("low = {}, high = {}, number of neighbour = {}, stddev = {}".format(low, high, n_neighbours, stdev))
 
     all_results = []
+    xs = []
+    ys = []
 
     for n_dimensions in range(2, 100):
         means1 = []
@@ -97,10 +100,20 @@ def display_results():
               format(n_dimensions, mu1, mu2, mu_intras, mean_ratio))
         results = [n_dimensions, mu1, mu2, mu_intras, mean_ratio]
         all_results.append(",".join(map(lambda x: str(x), results)))
+        xs.append(n_dimensions)
+        ys.append(mean_ratio)
     print("number_dimensions,mean_distance_cluster_1,mean_distance_cluster_2,mean_distance_intra_cluster,average_intra_vs_inter_disntance")
     for x in all_results:
         print(x)
+    plot_results(xs, ys)
 
+
+def plot_results(xs, ys):
+    plt.plot(xs, ys)
+    plt.xlabel("Dimensions")
+    plt.ylabel("Ratios")
+    plt.title("Intra vs Inter mean clusters for Normalized, Gaussian distributed points")
+    plt.show()
 
 if __name__ == "__main__":
     display_results()
