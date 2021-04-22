@@ -31,9 +31,11 @@ if __name__ == "__main__":
     print(x)
 
     n = len(eigen_vecs)
-    m = np.zeros([n, n])
-    m[:, 0] = eigen_vecs[0]
     Q = eigen_vecs
     lambda_inf = np.zeros([n, n])
     lambda_inf[0][0] = 1.
-    print(np.dot(Q, np.dot(lambda_inf, np.linalg.inv(Q))))
+    via_eig = np.dot(Q, np.dot(lambda_inf, np.linalg.inv(Q)))
+    tol = 1e-16
+    via_eig.real[abs(via_eig.real) < tol] = 0.0
+    via_eig.imag[abs(via_eig.imag) < tol] = 0.0
+    print(via_eig.real)
