@@ -2,7 +2,7 @@ import numpy as np
 
 
 np.set_printoptions(precision=3)
-# np.set_printoptions(suppress=True)
+np.set_printoptions(suppress=True)
 
 
 def transitions(n=6):
@@ -18,7 +18,7 @@ def transitions(n=6):
         for j in range(n - max_wait, n):
             a[j][i] = 0.
     # ... except the majority of the population
-    p_diagnosis = 1e-13
+    p_diagnosis = 1e-12
     a[n-1, :] = 0.
     a[:, n-1] = 0.
     a[n-1, 0] = p_diagnosis
@@ -29,13 +29,28 @@ def transitions(n=6):
 
 
 if __name__ == "__main__":
-    x = transitions()
+    n = 6
+    x = transitions(n)
 
     print(f"initial matrix:\n{x}")
 
     eigen_vals, eigen_vecs = np.linalg.eig(x)
+
+    x_vecs = np.dot(x, eigen_vecs)
+    print(f"x_vecs:\n{x_vecs}")
+
     print(f"Eigenvectors:\n{eigen_vecs}")
     print(f"Eigenvalues:\n{eigen_vals}")
+
+    print("x . v_i")
+    for i in range(n):
+        eigen_vec = np.transpose(eigen_vecs)[i]
+        eigen_val = eigen_vals[i]
+        v = eigen_vec
+        multiplied = np.dot(x, v)
+        if eigen_val != 0:
+            multiplied = multiplied / eigen_val
+        print(multiplied)
 
     iterations = 30
     for _ in range(iterations):
