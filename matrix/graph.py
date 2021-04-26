@@ -3,7 +3,7 @@ import random
 
 
 np.set_printoptions(precision=3)
-np.set_printoptions(suppress=True)
+# np.set_printoptions(suppress=True)
 
 
 def transitions(n=6):
@@ -12,7 +12,7 @@ def transitions(n=6):
     # waiting weeks can't go backwards
     for i in range(max_wait):
         for j in range(max_wait):
-            if j != i:
+            if j != i + 1:
                 a[i][j] = 0.
     # other states cannot go into waiting weeks
     for i in range(0, max_wait):
@@ -31,7 +31,7 @@ def transitions(n=6):
 
 
 def markov(pos, neighbor, weights):
-    n_iter = 1000000
+    n_iter = int(1e7)
     histo = {}
     n = len(neighbor)
     for i in range(n):
@@ -84,8 +84,10 @@ if __name__ == "__main__":
 
     weights = []
     for i in range(n):
-        w = sum(x[:, i])
+        w = sum(original[:, i])
         weights.append(w)
     print(f"weights = {weights}")
-    histo = markov(n - 1, neighbours(x), weights)
+    ns = neighbours(original)
+    print(f"Neighbours:\n{ns}")
+    histo = markov(n - 1, ns, weights)
     print(f"MCMC:\n{histo}")
