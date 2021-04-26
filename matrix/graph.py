@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 
 np.set_printoptions(precision=3)
@@ -18,7 +19,7 @@ def transitions(n=6):
         for j in range(n - max_wait, n):
             a[j][i] = 0.
     # ... except the majority of the population
-    p_diagnosis = 1e-12
+    p_diagnosis = 1e-5
     a[n-1, :] = 0.
     a[:, n-1] = 0.
     a[n-1, 0] = p_diagnosis
@@ -28,9 +29,75 @@ def transitions(n=6):
     # return a / a.sum(axis=1).sum(axis=2)
 
 
+def markov(pos, neighbor, weight):
+    n_iter = 1000000
+    histo = {}
+    n = len(neighbor)
+    for i in range(n):
+        histo[i] = 0
+    for iter in range(n_iter):
+        new_pos = neighbor[pos][random.randint(0, n)]
+        if random.random() < weight[new_pos] / weight[pos]:
+            pos = new_pos
+        histo[pos] += 1
+    return histo
+
+
+def next_position(i, j, weights):
+    limit = len(weights)
+    x = i
+    y = j
+    if bool(random.getrandbits(1)):
+        if bool(random.getrandbits(1)):
+            x += 1
+        else:
+            x -= 1
+    else:
+        if bool(random.getrandbits(1)):
+            y += 1
+        else:
+            y -= 1
+    if x < 0 or y < 0 or x >= limit or y >= limit or weights[x][y] == 0:
+        return i, j
+    else:
+        return x, y
+
+
+def mcmc(i, j, x):
+    print(f"Starting point: x[{i}, {j}] = {x[i, j]}")
+    n_iter = 1000000
+    n = len(x)
+    histo = np.zeros([n, n])
+    for _ in range(n_iter):
+        new_i, new_j = next_position(i, j, x)
+        if random.random() < x[new_i][new_j] / x[i][j]:
+            i = new_i
+            j = new_j
+        histo[i][j] += 1
+    return histo
+
+
+def neighbours(x):
+    n = len(x)
+    neighbor = []
+
+    for i in range(n):
+        xs = []
+        row = x[i]
+        for j in range(n):
+            if row[j] == 0:
+                xs.append(i)
+            else:
+                xs.append(j)
+        neighbor.append(xs)
+
+    return neighbor
+
+
 if __name__ == "__main__":
     n = 6
-    x = transitions(n)
+    original = transitions(n)
+    x = original
 
     print(f"initial matrix:\n{x}")
 
@@ -58,3 +125,5 @@ if __name__ == "__main__":
 
     print(f"After {iterations} the matrix looks like:\n{x}")
 
+    histo = mcmc(n - 1, n - 1, original)
+    print(f"MCMC:\n{histo}")
