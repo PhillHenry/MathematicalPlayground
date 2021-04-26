@@ -20,8 +20,9 @@ def transitions(n=6):
             a[j][i] = 0.
     # ... except the majority of the population
     p_diagnosis = 1e-5
+    p_leave = 1e-3
     a[n-1, :] = 0.
-    a[:, n-1] = 0.
+    a[:, n-1] = p_leave
     a[n-1, 0] = p_diagnosis
     a[n-1, n-1] = 1 - p_diagnosis
     row_sums = a.sum(axis=1)
@@ -35,45 +36,11 @@ def markov(pos, neighbor, weight):
     n = len(neighbor)
     for i in range(n):
         histo[i] = 0
-    for iter in range(n_iter):
-        new_pos = neighbor[pos][random.randint(0, n)]
+    for _ in range(n_iter):
+        new_pos = neighbor[pos][random.randint(0, n - 1)]
         if random.random() < weight[new_pos] / weight[pos]:
             pos = new_pos
         histo[pos] += 1
-    return histo
-
-
-def next_position(i, j, weights):
-    limit = len(weights)
-    x = i
-    y = j
-    if bool(random.getrandbits(1)):
-        if bool(random.getrandbits(1)):
-            x += 1
-        else:
-            x -= 1
-    else:
-        if bool(random.getrandbits(1)):
-            y += 1
-        else:
-            y -= 1
-    if x < 0 or y < 0 or x >= limit or y >= limit or weights[x][y] == 0:
-        return i, j
-    else:
-        return x, y
-
-
-def mcmc(i, j, x):
-    print(f"Starting point: x[{i}, {j}] = {x[i, j]}")
-    n_iter = 1000000
-    n = len(x)
-    histo = np.zeros([n, n])
-    for _ in range(n_iter):
-        new_i, new_j = next_position(i, j, x)
-        if random.random() < x[new_i][new_j] / x[i][j]:
-            i = new_i
-            j = new_j
-        histo[i][j] += 1
     return histo
 
 
@@ -125,5 +92,11 @@ if __name__ == "__main__":
 
     print(f"After {iterations} the matrix looks like:\n{x}")
 
-    histo = mcmc(n - 1, n - 1, original)
+    weights = np.zeros([n])
+    for i in range(n):
+        if i == n - 1:
+            weights[i] = 10
+        else:
+            weights[i] = 1
+    histo = markov(n - 1, neighbours(x), weights)
     print(f"MCMC:\n{histo}")
