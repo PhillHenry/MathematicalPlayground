@@ -37,8 +37,11 @@ def markov(pos, neighbor, weight):
     for i in range(n):
         histo[i] = 0
     for _ in range(n_iter):
-        new_pos = neighbor[pos][random.randint(0, n - 1)]
-        if random.random() < weight[new_pos] / weight[pos]:
+        new_neighbour = random.randint(0, n - 1)
+        new_pos = neighbor[pos][new_neighbour]
+        new_weight = sum(weight[:, new_neighbour])
+        old_weight = sum(weight[:, pos])
+        if random.random() < new_weight / old_weight:
             pos = new_pos
         histo[pos] += 1
     return histo
@@ -92,11 +95,5 @@ if __name__ == "__main__":
 
     print(f"After {iterations} the matrix looks like:\n{x}")
 
-    weights = np.zeros([n])
-    for i in range(n):
-        if i == n - 1:
-            weights[i] = 10
-        else:
-            weights[i] = 1
-    histo = markov(n - 1, neighbours(x), weights)
+    histo = markov(n - 1, neighbours(x), x)
     print(f"MCMC:\n{histo}")
