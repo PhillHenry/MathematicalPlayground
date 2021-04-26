@@ -19,7 +19,7 @@ def transitions(n=6):
         for j in range(n - max_wait, n):
             a[j][i] = 0.
     # ... except the majority of the population
-    p_diagnosis = 1e-5
+    p_diagnosis = 1e-3
     p_leave = 1e-3
     a[n-1, :] = 0.
     a[:, n-1] = p_leave
@@ -31,7 +31,7 @@ def transitions(n=6):
 
 
 def markov(pos, neighbor, weights):
-    n_iter = int(1e7)
+    n_iter = int(1e6)
     histo = {}
     n = len(neighbor)
     for i in range(n):
@@ -71,9 +71,9 @@ if __name__ == "__main__":
 
     print(f"initial matrix:\n{x}")
 
-    eigen_vals, eigen_vecs = np.linalg.eig(x)
+    eigen_vals, eigen_vecs_as_columns = np.linalg.eig(x)
 
-    print(f"Eigenvectors:\n{eigen_vecs}")
+    print(f"Eigenvectors:\n{eigen_vecs_as_columns}")
     print(f"Eigenvalues:\n{eigen_vals}")
 
     iterations = 30
@@ -88,6 +88,6 @@ if __name__ == "__main__":
         weights.append(w)
     print(f"weights = {weights}")
     ns = neighbours(original)
-    print(f"Neighbours:\n{ns}")
+    # print(f"Neighbours:\n{ns}")
     histo = markov(n - 1, ns, weights)
     print(f"MCMC:\n{histo}")
