@@ -12,7 +12,7 @@ def transitions(n=6):
     # waiting weeks can't go backwards
     for i in range(max_wait):
         for j in range(max_wait):
-            if j <= i:
+            if j != i:
                 a[i][j] = 0.
     # other states cannot go into waiting weeks
     for i in range(0, max_wait):
@@ -30,7 +30,7 @@ def transitions(n=6):
     # return a / a.sum(axis=1).sum(axis=2)
 
 
-def markov(pos, neighbor, weight):
+def markov(pos, neighbor, weights):
     n_iter = 1000000
     histo = {}
     n = len(neighbor)
@@ -39,8 +39,8 @@ def markov(pos, neighbor, weight):
     for _ in range(n_iter):
         new_neighbour = random.randint(0, n - 1)
         new_pos = neighbor[pos][new_neighbour]
-        new_weight = sum(weight[:, new_neighbour])
-        old_weight = sum(weight[:, pos])
+        new_weight = weights[new_neighbour]
+        old_weight = weights[pos]
         if random.random() < new_weight / old_weight:
             pos = new_pos
         histo[pos] += 1
@@ -73,21 +73,8 @@ if __name__ == "__main__":
 
     eigen_vals, eigen_vecs = np.linalg.eig(x)
 
-    x_vecs = np.dot(x, eigen_vecs)
-    print(f"x_vecs:\n{x_vecs}")
-
     print(f"Eigenvectors:\n{eigen_vecs}")
     print(f"Eigenvalues:\n{eigen_vals}")
-
-    print("x . v_i")
-    for i in range(n):
-        eigen_vec = np.transpose(eigen_vecs)[i]
-        eigen_val = eigen_vals[i]
-        v = eigen_vec
-        multiplied = np.dot(x, v)
-        if eigen_val != 0:
-            multiplied = multiplied / eigen_val
-        print(multiplied)
 
     iterations = 30
     for _ in range(iterations):
@@ -95,5 +82,10 @@ if __name__ == "__main__":
 
     print(f"After {iterations} the matrix looks like:\n{x}")
 
-    histo = markov(n - 1, neighbours(x), x)
+    weights = []
+    for i in range(n):
+        w = sum(x[:, i])
+        weights.append(w)
+    print(f"weights = {weights}")
+    histo = markov(n - 1, neighbours(x), weights)
     print(f"MCMC:\n{histo}")
