@@ -7,8 +7,18 @@ np.set_printoptions(precision=3)
 np.set_printoptions(suppress=True)
 
 
-def transitions(n=6):
-    a = np.random.rand(n, n) #.astype("float64")
+def transition_matrix(n=6):
+    """
+    Create the stochastic matrix.
+    First `max_wait` states are the waiting list for week_1, week_2, ..., week_max_wait.
+    The last state is the "remain" pool of dead, cured or about to enter the system.
+    All states can possibly transition to the "remain" state (via column `n` of the matrix)
+
+    :param n: Number of states
+    :return: an n x n stochastic matrix. Values of at [i,j] are the probabilities of transitioning
+             from state i to state j.
+    """
+    a = np.random.rand(n, n)
     max_wait = min(n // 2, n - 3)
     # waiting weeks can't go backwards
     for i in range(max_wait):
@@ -28,10 +38,19 @@ def transitions(n=6):
     a[n-1, n-1] = 1 - p_diagnosis
     row_sums = a.sum(axis=1)
     return a / row_sums[:, np.newaxis]
-    # return a / a.sum(axis=1).sum(axis=2)
 
 
-def markov(pos, neighbor, weights):
+def metropolis(pos, neighbor, weights):
+    """
+    The Metropolis algorithm. Stolen from
+    https://github.com/marcelom/smac-001/blob/master/programs_lecture_1/pebble_basic_inhomogeneous.py
+    (Coursera's "Statistical Mechanics: Algorithms and Computations")
+
+    :param pos: Start state
+    :param neighbor: list of list of neighbours for a given state
+    :param weights:
+    :return: Historgram of state to number of iterations spent in it
+    """
     n_iter = int(1e6)
     histo = {}
     n = len(neighbor)
@@ -48,13 +67,18 @@ def markov(pos, neighbor, weights):
     return histo
 
 
-def neighbours(x):
-    n = len(x)
+def generate_neighbours_list(transition_matrix):
+    """
+
+    :param transition_matrix:
+    :return: the neighbours of each state
+    """
+    n = len(transition_matrix)
     neighbor = []
 
     for i in range(n):
         xs = []
-        row = x[i]
+        row = transition_matrix[i]
         for j in range(n):
             if row[j] == 0:
                 xs.append(i)
@@ -65,20 +89,19 @@ def neighbours(x):
     return neighbor
 
 
-def do_markov(weights, n):
+def do_metropolis(weights, matrix):
     print(f"weights = {weights}")
-    ns = neighbours(original)
-    histo = markov(n - 1, ns, weights)
+    ns = generate_neighbours_list(matrix)
+    histo = metropolis(0, ns, weights)
     print(f"MCMC:\n{histo}")
 
 
-if __name__ == "__main__":
-    n = 6
-    original = transitions(n)
-    x = original
-
-    print(f"initial matrix:\n{x}")
-
+def inspect_eigenvectors(x):
+    """
+    :param x: The stochastic matrix
+    :return:
+    """
+    num_states = len(x)
     eigen_vals, eigen_vecs_as_columns = np.linalg.eig(x)
 
     print(f"Eigenvectors:\n{eigen_vecs_as_columns}")  # unit length but not necessarily orthogonal
@@ -92,21 +115,40 @@ if __name__ == "__main__":
 
     dominant_vec = eigen_vecs_as_columns[:, dominant_index]
     print(f"Dominant eigen vector = {dominant_vec}")
-    dominant = np.zeros([n, n])
+    dominant = np.zeros([num_states, num_states])
     dominant[dominant_index][dominant_index] = 1.0
     reconstituted = np.dot(np.dot(eigen_vecs_as_columns, dominant), np.linalg.inv(eigen_vecs_as_columns))
-    print(f"Reconstituted:\n{reconstituted}")
+    return reconstituted
+
+
+def explore_stochastic_matrix():
+    num_states = 6
+    original = transition_matrix(num_states)
+    matrix = original
+
+    print(f"initial matrix:\n{matrix}")
+
+    reconstituted = inspect_eigenvectors(matrix)
+    print(f"Reconstituted:\n{reconstituted}")  # should be pretty close to matrix^t below
 
     iterations = 50
     for _ in range(iterations):
-        x = np.dot(x, x)
+        matrix = np.dot(matrix, matrix)
 
-    print(f"After {iterations} the matrix looks like:\n{x}")
+    print(f"After {iterations} the matrix looks like:\n{matrix}")
 
-    do_markov([1] * n, n)
+    # PH - no idea what to use for the weights!
+    # Try uniform values:
+    do_metropolis([1] * num_states, original)
+
+    # Try total of incoming probabilities
     weights = []
-    for i in range(n):
+    for i in range(num_states):
         w = sum(original[:, i])
         weights.append(w)
-    do_markov(weights, n)
+    do_metropolis(weights, original)
+
+
+if __name__ == "__main__":
+    explore_stochastic_matrix()
 
