@@ -1,9 +1,10 @@
 import numpy as np
 import random
+import math
 
 
 np.set_printoptions(precision=3)
-# np.set_printoptions(suppress=True)
+np.set_printoptions(suppress=True)
 
 
 def transitions(n=6):
@@ -18,7 +19,7 @@ def transitions(n=6):
     for i in range(0, max_wait):
         for j in range(n - max_wait, n):
             a[j][i] = 0.
-    # ... except the majority of the population
+    # ... except the "Remain" group
     p_diagnosis = 1e-3
     p_leave = 1e-3
     a[n-1, :] = 0.
@@ -64,6 +65,13 @@ def neighbours(x):
     return neighbor
 
 
+def do_markov(weights, n):
+    print(f"weights = {weights}")
+    ns = neighbours(original)
+    histo = markov(n - 1, ns, weights)
+    print(f"MCMC:\n{histo}")
+
+
 if __name__ == "__main__":
     n = 6
     original = transitions(n)
@@ -73,21 +81,32 @@ if __name__ == "__main__":
 
     eigen_vals, eigen_vecs_as_columns = np.linalg.eig(x)
 
-    print(f"Eigenvectors:\n{eigen_vecs_as_columns}")
+    print(f"Eigenvectors:\n{eigen_vecs_as_columns}")  # unit length but not necessarily orthogonal
     print(f"Eigenvalues:\n{eigen_vals}")
+    # print(f"Check orthonormal:\n{np.dot(np.transpose(eigen_vecs_as_columns), eigen_vecs_as_columns)}")
 
-    iterations = 30
+    for i, v in enumerate(eigen_vals):
+        if math.isclose(v.real, 1.0):
+            print(f"dominant eigenvalue at position {i}")
+            dominant_index = i
+
+    dominant_vec = eigen_vecs_as_columns[:, dominant_index]
+    print(f"Dominant eigen vector = {dominant_vec}")
+    dominant = np.zeros([n, n])
+    dominant[dominant_index][dominant_index] = 1.0
+    reconstituted = np.dot(np.dot(eigen_vecs_as_columns, dominant), np.linalg.inv(eigen_vecs_as_columns))
+    print(f"Reconstituted:\n{reconstituted}")
+
+    iterations = 50
     for _ in range(iterations):
         x = np.dot(x, x)
 
     print(f"After {iterations} the matrix looks like:\n{x}")
 
+    do_markov([1] * n, n)
     weights = []
     for i in range(n):
         w = sum(original[:, i])
         weights.append(w)
-    print(f"weights = {weights}")
-    ns = neighbours(original)
-    # print(f"Neighbours:\n{ns}")
-    histo = markov(n - 1, ns, weights)
-    print(f"MCMC:\n{histo}")
+    do_markov(weights, n)
+
