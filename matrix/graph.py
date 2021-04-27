@@ -99,7 +99,8 @@ def do_metropolis(weights, matrix):
 def inspect_eigenvectors(x):
     """
     :param x: The stochastic matrix
-    :return:
+    :return: The S A S^-1 matrix where A is a matrix that contains only the dominant eigenvector.
+             This should equal x^t as t -> infinity.
     """
     num_states = len(x)
     eigen_vals, eigen_vecs_as_columns = np.linalg.eig(x)
