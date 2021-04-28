@@ -60,7 +60,7 @@ def metropolis(pos, neighbor, weights, m):
         histo[i] = 0
     for _ in range(n_iter):
         new_pos = neighbor[pos][random.randint(0, n - 1)]
-        if generalized_metropolis(weights, m, pos, new_pos):
+        if generalized_metropolis(weights, m, pos, new_pos):  # TODO m should be the a priori
             pos = new_pos
         histo[pos] += 1
     return histo
@@ -70,7 +70,7 @@ def generalized_metropolis(weights, m, a, b):
     """
     Equation 1.18 from 'Statistical Mechanic: Algorithms and Computations", Krauth
     :param weights:
-    :param m: stochastic matrix
+    :param m: An a priori distribution
     :return: boolean indication whether to move or not
     """
     p_b = weights[b]
