@@ -37,7 +37,8 @@ def transition_matrix(n=6):
     a[n-1, 0] = p_diagnosis
     a[n-1, n-1] = 1 - p_diagnosis
     row_sums = a.sum(axis=1)
-    return a / row_sums[:, np.newaxis]
+    m = a / row_sums[:, np.newaxis]
+    return np.transpose(m)
 
 
 def metropolis(pos, neighbor, weights):
@@ -60,7 +61,7 @@ def metropolis(pos, neighbor, weights):
         new_neighbour = random.randint(0, n - 1)
         new_pos = neighbor[pos][new_neighbour]
         new_weight = weights[new_neighbour]
-        old_weight = weights[pos]
+        old_weight = weights[pos] # TODO add probabilities
         if random.random() < new_weight / old_weight:
             pos = new_pos
         histo[pos] += 1
