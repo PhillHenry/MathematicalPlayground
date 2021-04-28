@@ -54,15 +54,15 @@ def metropolis(pos, neighbor, weights, m):
     :return: Historgram of state to number of iterations spent in it
     """
     n_iter = int(1e6)
-    histo = {}
     n = len(neighbor)
+    histo = np.zeros([n, n])
     for i in range(n):
         histo[i] = 0
     for _ in range(n_iter):
         new_pos = neighbor[pos][random.randint(0, n - 1)]
         if generalized_metropolis(weights, m, pos, new_pos):  # TODO m should be the a priori
             pos = new_pos
-        histo[pos] += 1
+        histo[new_pos][pos] += 1
     return histo
 
 
