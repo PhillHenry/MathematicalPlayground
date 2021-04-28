@@ -16,7 +16,7 @@ def transition_matrix(n=6):
 
     :param n: Number of states
     :return: an n x n stochastic matrix. Values of at [i,j] are the probabilities of transitioning
-             from state i to state j.
+             from state j to state i.
     """
     a = np.random.rand(n, n)
     max_wait = min(n // 2, n - 3)
@@ -41,7 +41,7 @@ def transition_matrix(n=6):
     return np.transpose(m)
 
 
-def metropolis(pos, neighbor, weights):
+def metropolis(pos, neighbor, weights, m):
     """
     The Metropolis algorithm. Stolen from
     https://github.com/marcelom/smac-001/blob/master/programs_lecture_1/pebble_basic_inhomogeneous.py
@@ -50,6 +50,7 @@ def metropolis(pos, neighbor, weights):
     :param pos: Start state
     :param neighbor: list of list of neighbours for a given state
     :param weights:
+    :param m: stochastic matrix
     :return: Historgram of state to number of iterations spent in it
     """
     n_iter = int(1e6)
@@ -58,14 +59,28 @@ def metropolis(pos, neighbor, weights):
     for i in range(n):
         histo[i] = 0
     for _ in range(n_iter):
-        new_neighbour = random.randint(0, n - 1)
-        new_pos = neighbor[pos][new_neighbour]
-        new_weight = weights[new_neighbour]
-        old_weight = weights[pos] # TODO add probabilities
-        if random.random() < new_weight / old_weight:
+        new_pos = neighbor[pos][random.randint(0, n - 1)]
+        if generalized_metropolis(weights, m, pos, new_pos):
             pos = new_pos
         histo[pos] += 1
     return histo
+
+
+def generalized_metropolis(weights, m, a, b):
+    """
+    Equation 1.18 from 'Statistical Mechanic: Algorithms and Computations", Krauth
+    :param weights:
+    :param m: stochastic matrix
+    :return: boolean indication whether to move or not
+    """
+    p_b = weights[b]
+    p_a = weights[a]
+    p_b_to_a = m[a][b]
+    p_a_to_b = m[b][a]
+    if p_a == 0 or p_a_to_b == 0:
+        return True
+    else:
+        return random.random() < min(1, (p_b * p_b_to_a) / (p_a * p_a_to_b))
 
 
 def generate_neighbours_list(transition_matrix):
@@ -79,9 +94,9 @@ def generate_neighbours_list(transition_matrix):
 
     for i in range(n):
         xs = []
-        row = transition_matrix[i]
+        col = transition_matrix[:, i]
         for j in range(n):
-            if row[j] == 0:
+            if col[j] == 0:
                 xs.append(i)
             else:
                 xs.append(j)
@@ -93,7 +108,7 @@ def generate_neighbours_list(transition_matrix):
 def do_metropolis(weights, matrix):
     print(f"weights = {weights}")
     ns = generate_neighbours_list(matrix)
-    histo = metropolis(0, ns, weights)
+    histo = metropolis(0, ns, weights, matrix)
     print(f"MCMC:\n{histo}")
 
 
@@ -146,7 +161,7 @@ def explore_stochastic_matrix():
     # Try total of incoming probabilities
     weights = []
     for i in range(num_states):
-        w = sum(original[:, i])
+        w = sum(original[i, :])
         weights.append(w)
     do_metropolis(weights, original)
 
