@@ -29,4 +29,4 @@ def make_y(x):
 
 
 def make_target(row):
-    return sum([a * (b + 1) for b, a in enumerate(row)])
+    return sum([a * (b + 1) for b, a in enumerate(row)]) + 42
