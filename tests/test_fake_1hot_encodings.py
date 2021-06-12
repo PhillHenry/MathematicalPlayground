@@ -1,4 +1,4 @@
-from data.one_hot_encodings import make_fake_1hot_encodings
+from data.one_hot_encodings import make_fake_1hot_encodings, drop_last
 import numpy as np
 
 
@@ -10,6 +10,16 @@ def check_columns_contain_ones(m):
 
 def num_rows_all_zero(m):
     return len(list(filter(lambda v: sum(v) == 0., m)))
+
+
+def test_drop_columns():
+    n_categories = 4
+    n_cardinality = 5
+    m = np.zeros([1, n_categories * n_cardinality])
+    for i in range(n_categories * n_cardinality):
+        m[0, i] = i
+    dropped = drop_last(m, n_categories, n_cardinality)
+    assert np.allclose(dropped[0], [0,1,2,3, 5,6,7,8, 10,11,12,13, 15,16,17,18])
 
 
 def test_every_row_has_a_1_for_each_category_when_no_drop_last():

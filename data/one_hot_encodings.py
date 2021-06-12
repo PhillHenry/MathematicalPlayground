@@ -30,3 +30,9 @@ def make_y(x):
 
 def make_target(row):
     return sum([a * (b + 1) for b, a in enumerate(row)]) + 42
+
+
+def drop_last(m, n_categories, n_cardinality):
+    cols_to_drop = [(i * n_cardinality) + n_cardinality - 1 for i in range(n_categories)]
+    return np.delete(m, cols_to_drop, 1)
+

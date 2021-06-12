@@ -1,13 +1,8 @@
 from sklearn import linear_model
 import numpy as np
 from models.lin_reg_utils import train, check, check_row, test
-from data.one_hot_encodings import make_fake_1hot_encodings, make_y, make_target
+from data.one_hot_encodings import make_fake_1hot_encodings, make_y, make_target, drop_last
 import random
-
-
-def drop_last(m, n_categories, n_cardinality):
-    cols_to_drop = [(i * n_cardinality) + n_cardinality - 1 for i in range(n_categories)]
-    return np.delete(m, cols_to_drop, 1)
 
 
 def train_and_check(x, ys, n_rows, fit_intercept):
