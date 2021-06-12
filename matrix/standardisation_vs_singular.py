@@ -7,10 +7,10 @@ def make_fake_1hot_encodings(n_rows=1000,
                              n_cardinality=5,
                              drop_last=True) -> np.ndarray:
     if drop_last:
-        drop_last = 0
+        drop_last = 1
         n_cardinality = n_cardinality - 1
     else:
-        drop_last = 1
+        drop_last = 0
     n_cols = n_categories * n_cardinality
     m = np.zeros([n_rows, n_cols])
     for i in range(n_rows):
