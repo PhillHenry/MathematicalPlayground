@@ -23,6 +23,10 @@ def make_fake_1hot_encodings(n_rows=1000,
 def make_y(x):
     ys = []
     for row in x:
-        y = [a * (b + 1) for b, a in enumerate(row)]
-        ys.append(sum(y))
+        y = make_target(row)
+        ys.append(y)
     return ys
+
+
+def make_target(row):
+    return sum([a * (b + 1) for b, a in enumerate(row)])

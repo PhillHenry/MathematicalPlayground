@@ -29,8 +29,12 @@ def test(regr, n_train, x, ys):
 def check(x, ys, coeffs, intercept, index):
     random_row = x[index]
     random_value = ys[index]
-    y = np.dot(coeffs, random_row) + intercept
-    print(f"for example, {y} = {random_value}")
+    check_row(coeffs, intercept, random_row, random_value)
+
+
+def check_row(coeffs, intercept, row, value):
+    y = np.dot(coeffs, row) + intercept
+    print(f"for example, {y} = {value}")
 
 
 def no_drop_last(model, drop_last=True):

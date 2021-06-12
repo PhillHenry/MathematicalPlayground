@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn import linear_model
-from model.lin_reg_utils import alpha_intercepts, no_drop_last
+from models.lin_reg_utils import alpha_intercepts, no_drop_last
 
 
 if __name__ == "__main__":
