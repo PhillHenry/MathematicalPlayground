@@ -1,4 +1,4 @@
-from matrix.standardisation_vs_singular import make_fake_1hot_encodings
+from data.one_hot_encodings import make_fake_1hot_encodings
 import numpy as np
 
 
