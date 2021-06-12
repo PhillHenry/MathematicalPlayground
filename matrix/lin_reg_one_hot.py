@@ -8,7 +8,7 @@ from data.one_hot_encodings import make_fake_1hot_encodings
 def make_y(x):
     ys = []
     for row in x:
-        y = [a * (b + 1) for a, b in zip(row, range(len(row)))]
+        y = [a * (b + 1) for b, a in enumerate(row)]
         ys.append(sum(y))
     return ys
 
@@ -17,7 +17,7 @@ def no_drop_last(regr, drop_last=True):
     x = make_fake_1hot_encodings(drop_last=drop_last)
     ys = make_y(x)
     est = regr.fit(x, ys)
-    print(f'{len(regr.coef_)} Coefficients: \n', regr.coef_)
+    print(f'{len(regr.coef_)} Coefficients: \n', ['%.3f' % x for x in regr.coef_])
     print("intercept", regr.intercept_)
 
 
