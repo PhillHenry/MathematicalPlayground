@@ -49,18 +49,21 @@ def no_drop_last(model, drop_last=True):
     model, coeffs, intercept = train(model, n_train, x, ys)
     test(model, n_train, x, ys)
     check(x, ys, coeffs, intercept, int(random.random() * n_rows))
+    print()
 
 
 def alpha_intercepts(m):
     for intercept in [True, False]:
         for drop in [True, False]:
-            print(f"\n{m}, fit_interecpt = {intercept}, drop_last = {drop}")
+            print(f"{m}, fit_interecpt = {intercept}, drop_last = {drop}")
             no_drop_last(m(alpha=.01, fit_intercept=intercept), drop_last=drop)
 
 
 if __name__ == "__main__":
     np.set_printoptions(precision=3)
-    no_drop_last(linear_model.LinearRegression(fit_intercept=True))
-    no_drop_last(linear_model.LinearRegression(fit_intercept=False))
+    for intercept in [True, False]:
+        for drop in [True, False]:
+            print(f"LinearRegression: fit_interecpt = {intercept}, drop_last = {drop}")
+            no_drop_last(linear_model.LinearRegression(fit_intercept=intercept), drop_last=drop)
     alpha_intercepts(linear_model.Ridge)
     alpha_intercepts(linear_model.Lasso)
