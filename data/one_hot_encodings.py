@@ -19,3 +19,10 @@ def make_fake_1hot_encodings(n_rows=1000,
                 m[i][(j * (n_cardinality - correction)) + index] = 1.
     return m
 
+
+def make_y(x):
+    ys = []
+    for row in x:
+        y = [a * (b + 1) for b, a in enumerate(row)]
+        ys.append(sum(y))
+    return ys
