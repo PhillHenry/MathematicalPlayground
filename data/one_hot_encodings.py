@@ -20,16 +20,16 @@ def make_fake_1hot_encodings(n_rows=1000,
     return m
 
 
-def make_y(x):
+def make_y(x, intercept=42, error=0):
     ys = []
     for row in x:
-        y = make_target(row)
+        y = make_target(row, intercept, error)
         ys.append(y)
     return ys
 
 
-def make_target(row):
-    return sum([a * (b + 1) for b, a in enumerate(row)]) + 42
+def make_target(row, intercept=42, error=0):
+    return sum([a * (b + 1) for b, a in enumerate(row)]) + 42 + (error * random.gauss(0, 1))
 
 
 def drop_last(m, n_categories, n_cardinality):

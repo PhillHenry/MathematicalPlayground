@@ -20,10 +20,12 @@ def test(regr, n_train, x, ys):
     test_y = ys[n_train:]
     y_pred = regr.predict(test_x)
 
-    print('Mean squared error: %.2f'
-          % mean_squared_error(test_y, y_pred))
+    error = mean_squared_error(test_y, y_pred)
+    print('Mean squared error: %.4f' % error)
     print('Coefficient of determination: %.2f'
           % r2_score(test_y, y_pred))
+
+    return error
 
 
 def check(x, ys, coeffs, intercept, index):

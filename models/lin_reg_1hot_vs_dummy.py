@@ -13,7 +13,7 @@ def train_and_check(x, ys, n_rows, fit_intercept):
     check(x, ys, coeffs, intercept, int(random.random() * n_rows))
     zero_vector = np.zeros([np.shape(x)[1]])
     check_row(coeffs, intercept, zero_vector, make_target(zero_vector))
-    test(m, n_train, x, ys)
+    return test(m, n_train, x, ys)
 
 
 def compare_1hot_vs_dummy():
@@ -21,11 +21,13 @@ def compare_1hot_vs_dummy():
     n_categories = 4
     n_cardinality = 5
     m = make_fake_1hot_encodings(drop_last=False, n_rows=n_rows, n_categories=n_categories, n_cardinality=n_cardinality)
-    ys = make_y(m)
     m_dropped = drop_last(m, n_categories, n_cardinality)
-    for intercept in [True, False]:
-        train_and_check(m, ys, n_rows, intercept)
-        train_and_check(m_dropped, ys, n_rows, intercept)
+    for error in [10, 100, 1000]:
+        ys = make_y(m, error=error)
+        for intercept in [True, False]:
+            m_error = train_and_check(m, ys, n_rows, intercept)
+            m_dropped_error = train_and_check(m_dropped, ys, n_rows, intercept)
+            print("=== difference in error %.4f" % (m_error - m_dropped_error))
 
 
 if __name__ == "__main__":
