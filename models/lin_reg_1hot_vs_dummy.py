@@ -16,6 +16,10 @@ def train_and_check(x, ys, n_rows, fit_intercept):
     return test(m, n_train, x, ys)
 
 
+def deltas(xs):
+    return [b - a for a, b in zip(xs, xs[1:])]
+
+
 def compare_1hot_vs_dummy():
     n_rows = 1000
     n_categories = 4
@@ -27,7 +31,8 @@ def compare_1hot_vs_dummy():
         for intercept in [True, False]:
             m_error = train_and_check(m, ys, n_rows, intercept)
             m_dropped_error = train_and_check(m_dropped, ys, n_rows, intercept)
-            print("=== difference in error %.4f" % (m_error - m_dropped_error))
+            delta_error = m_error - m_dropped_error
+            print(("=== difference in error %.4f (%.4f)" % (delta_error, delta_error * 100 / m_error)))
 
 
 if __name__ == "__main__":
