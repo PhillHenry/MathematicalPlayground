@@ -25,7 +25,9 @@ def skip_every(n, xs):
 
 
 def num_non_increasing(xs, skip):
-    return len([x for x in deltas(skip_every(skip, xs)) if x < 0])
+    ds = deltas(xs)
+    skipped = skip_every(skip, ds)
+    return len([x for x in skipped if x < 0])
 
 
 def compare_1hot_vs_dummy():
@@ -42,7 +44,7 @@ def compare_1hot_vs_dummy():
             delta_error = m_error - m_dropped_error
             print(("=== difference in error %.4f (%.4f)" % (delta_error, delta_error * 100 / m_error)))
             print(f"non increasing coefficients: {num_non_increasing(m_coeffs, n_cardinality)}")
-            print(f"non increasing dropped coefficients: {num_non_increasing(m_dropped_coeffs, n_cardinality)}")
+            print(f"non increasing dropped coefficients: {num_non_increasing(m_dropped_coeffs, n_cardinality - 1)}")
 
 
 if __name__ == "__main__":
