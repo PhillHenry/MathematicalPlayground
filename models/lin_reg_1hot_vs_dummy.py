@@ -13,11 +13,15 @@ def train_and_check(x, ys, n_rows, fit_intercept):
     check(x, ys, coeffs, intercept, int(random.random() * n_rows))
     zero_vector = np.zeros([np.shape(x)[1]])
     check_row(coeffs, intercept, zero_vector, make_target(zero_vector))
-    return test(m, n_train, x, ys)
+    return test(m, n_train, x, ys), coeffs
 
 
 def deltas(xs):
     return [b - a for a, b in zip(xs, xs[1:])]
+
+
+def skip_every(n, xs):
+    return [x for i, x in enumerate(xs) if (i + 1) % n != 0]
 
 
 def compare_1hot_vs_dummy():
@@ -29,10 +33,12 @@ def compare_1hot_vs_dummy():
     for error in [10, 100, 1000]:
         ys = make_y(m, error=error)
         for intercept in [True, False]:
-            m_error = train_and_check(m, ys, n_rows, intercept)
-            m_dropped_error = train_and_check(m_dropped, ys, n_rows, intercept)
+            m_error, m_coeffs = train_and_check(m, ys, n_rows, intercept)
+            m_dropped_error, m_dropped_coeffs = train_and_check(m_dropped, ys, n_rows, intercept)
             delta_error = m_error - m_dropped_error
             print(("=== difference in error %.4f (%.4f)" % (delta_error, delta_error * 100 / m_error)))
+            print(f"non increasing coefficients: {len([x for x in deltas(skip_every(n_cardinality, m_coeffs)) if x <= 0])}")
+            print(f"non increasing dropped coefficients: {len([x for x in deltas(skip_every(n_cardinality, m_dropped_coeffs)) if x <= 0])}")
 
 
 if __name__ == "__main__":
