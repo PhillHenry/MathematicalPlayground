@@ -11,14 +11,11 @@ def standardize(m: np.ndarray) -> np.ndarray:
 
 
 def invert_and_standardize(m):
-    m_squared = square(m)
+    print(f"det(m_squared) = {np.linalg.det(square(m))}")
 
-    print(f"det(m_squared) = {np.linalg.det(m_squared)}")
+    print(f"det(standardized(m) * standardized(m).T) = {np.linalg.det(square(standardize(m)))}")
 
-    m_standardized = standardize(m)
-    m_standardized_squared = square(m_standardized)
-
-    print(f"det(m_squared) = {np.linalg.det(m_standardized_squared)}")
+    print(f"det(standardized(m m.T) = {np.linalg.det(standardize(square(m)))}")
 
 
 if __name__ == "__main__":
