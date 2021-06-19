@@ -1,6 +1,6 @@
 import numpy as np
 
-from data.one_hot_encodings import make_fake_1hot_encodings
+from data.one_hot_encodings import make_fake_1hot_encodings, make_y
 
 
 def square(m):
@@ -19,13 +19,25 @@ def invert_and_standardize(m):
     print(f"det(standardized(m m.T) = {np.linalg.det(standardize(square(m)))}")
 
 
+def add_value_col(m):
+    ys = make_y(m, error=False)
+    ys = np.transpose(np.asmatrix(ys))
+    return np.hstack((m, ys))
+
+
 if __name__ == "__main__":
     print("\ndrop_last=True")
     m = make_fake_1hot_encodings(drop_last=True)
     invert_and_standardize(m)
+
     print("\ndrop_last=False")
     m = make_fake_1hot_encodings(drop_last=False)
     invert_and_standardize(m)
+
+    print("\ndrop_last=False, add values added")
+    m = add_value_col(make_fake_1hot_encodings(drop_last=False, n_rows=1001))
+    invert_and_standardize(m)
+
     print("\nSquare one hot encoding")
     square_matrix = make_fake_1hot_encodings(drop_last=False, n_rows=100, n_categories=20,
                                              n_cardinality=5)
