@@ -34,9 +34,23 @@ if __name__ == "__main__":
     m = make_fake_1hot_encodings(drop_last=False)
     invert_and_standardize(m)
 
+
     print("\ndrop_last=False, add values added")
     m = add_value_col(make_fake_1hot_encodings(drop_last=False, n_rows=1001))
     invert_and_standardize(m)
+
+    n_categories = 4
+    n_cardinality = 5
+    m = add_value_col(make_fake_1hot_encodings(drop_last=False,
+                                               n_categories=n_categories,
+                                               n_cardinality=n_cardinality,
+                                               n_rows=((n_categories * n_cardinality) + 1)))
+    print(f"\nnaturally square matrix {np.shape(m)} det = {np.linalg.det(square(m))}")
+    m = add_value_col(make_fake_1hot_encodings(drop_last=True,
+                                               n_categories=n_categories,
+                                               n_cardinality=n_cardinality,
+                                               n_rows=((n_categories * (n_cardinality - 1)) + 1)))
+    print(f"\nnaturally square matrix {np.shape(m)} det = {np.linalg.det(square(m))}")
 
     print("\nSquare one hot encoding")
     square_matrix = make_fake_1hot_encodings(drop_last=False, n_rows=100, n_categories=20,
