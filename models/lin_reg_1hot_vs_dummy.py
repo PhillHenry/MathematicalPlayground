@@ -42,7 +42,7 @@ def compare_1hot_vs_dummy():
             m_error, m_coeffs = train_and_check(m, ys, n_rows, intercept)
             m_dropped_error, m_dropped_coeffs = train_and_check(m_dropped, ys, n_rows, intercept)
             delta_error = m_error - m_dropped_error
-            print(("=== difference in error %.4f (%.4f)" % (delta_error, delta_error * 100 / m_error)))
+            print(("=== Noise level = %.4f, difference in error %.4f (%.4f)" % (error, delta_error, delta_error * 100 / m_error)))
             print(f"non increasing coefficients: {num_non_increasing(m_coeffs, n_cardinality)}")
             print(f"non increasing dropped coefficients: {num_non_increasing(m_dropped_coeffs, n_cardinality - 1)}")
 

@@ -1,12 +1,14 @@
 import random
 
 import numpy as np
+from sklearn.base import RegressorMixin
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.linear_model import LinearRegression
 
 from data.one_hot_encodings import make_fake_1hot_encodings, make_y
 
 
-def train(regr, n_train, x, ys):
+def train(regr: RegressorMixin, n_train, x, ys):
     train_x = x[:n_train, :]
     train_y = ys[:n_train]
     est = regr.fit(train_x, train_y)
@@ -36,7 +38,7 @@ def check(x, ys, coeffs, intercept, index):
 
 def check_row(coeffs, intercept, row, value):
     y = np.dot(coeffs, row) + intercept
-    print(f"for example, {y} = {value}")
+    # print(f"for example, {y} = {value}")
 
 
 def no_drop_last(model, drop_last=True):
