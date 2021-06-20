@@ -12,8 +12,7 @@ def train(regr: RegressorMixin, n_train, x, ys):
     train_x = x[:n_train, :]
     train_y = ys[:n_train]
     est = regr.fit(train_x, train_y)
-    print(f'{len(regr.coef_)} Coefficients: \n', ['%.3f' % x for x in regr.coef_])
-    print("intercept", regr.intercept_)
+    # print(f'{len(regr.coef_)} Coefficients: \n', ['%.3f' % x for x in regr.coef_])
     return regr, regr.coef_, regr.intercept_
 
 
@@ -23,8 +22,8 @@ def test(regr, n_train, x, ys):
     y_pred = regr.predict(test_x)
 
     error = mean_squared_error(test_y, y_pred)
-    print('Mean squared error: %.4f' % error)
-    print('Coefficient of determination: %.2f'
+    print('\tMean squared error: %.4f' % error)
+    print('\tCoefficient of determination: %.2f'
           % r2_score(test_y, y_pred))
 
     return error
@@ -38,7 +37,7 @@ def check(x, ys, coeffs, intercept, index):
 
 def check_row(coeffs, intercept, row, value):
     y = np.dot(coeffs, row) + intercept
-    # print(f"for example, {y} = {value}")
+    print(f"for example, {y} = {value}")
 
 
 def no_drop_last(model, drop_last=True):

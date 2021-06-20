@@ -1,4 +1,5 @@
 from sklearn import linear_model
+from sklearn.linear_model._coordinate_descent import Lasso
 import numpy as np
 from models.lin_reg_utils import train, check, check_row, test
 from data.one_hot_encodings import make_fake_1hot_encodings, make_y, make_target, drop_last
@@ -7,12 +8,9 @@ import random
 
 def train_and_check(x, ys, n_rows, fit_intercept):
     n_train = int(n_rows * 0.8)
-    print(f"\nIntercept = {fit_intercept}")
+    # model = Lasso(alpha=0.9)
     model = linear_model.LinearRegression(fit_intercept=fit_intercept)
     m, coeffs, intercept = train(model, n_train, x, ys)
-    check(x, ys, coeffs, intercept, int(random.random() * n_rows))
-    zero_vector = np.zeros([np.shape(x)[1]])
-    check_row(coeffs, intercept, zero_vector, make_target(zero_vector))
     return test(m, n_train, x, ys), coeffs
 
 
@@ -39,12 +37,16 @@ def compare_1hot_vs_dummy():
     for error in [0, 10, 100, 1000]:
         ys = make_y(m, error=error)
         for intercept in [True, False]:
+            print("One hot encoding")
             m_error, m_coeffs = train_and_check(m, ys, n_rows, intercept)
+            print("Dummy variable encoding")
             m_dropped_error, m_dropped_coeffs = train_and_check(m_dropped, ys, n_rows, intercept)
             delta_error = m_error - m_dropped_error
-            print(("=== Noise level = %.4f, difference in error %.4f (%.4f)" % (error, delta_error, delta_error * 100 / m_error)))
+            print(("=== intercept = %s, Noise level = %.4f, difference in error %.4f (%.4f)" % (
+                intercept, error, delta_error, delta_error * 100 / m_error)))
             print(f"non increasing coefficients: {num_non_increasing(m_coeffs, n_cardinality)}")
             print(f"non increasing dropped coefficients: {num_non_increasing(m_dropped_coeffs, n_cardinality - 1)}")
+            print("")
 
 
 if __name__ == "__main__":
