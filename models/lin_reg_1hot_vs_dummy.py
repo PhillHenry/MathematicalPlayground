@@ -6,10 +6,8 @@ from data.one_hot_encodings import make_fake_1hot_encodings, make_y, make_target
 import random
 
 
-def train_and_check(x, ys, n_rows, fit_intercept):
+def train_and_check(x, ys, n_rows, model):
     n_train = int(n_rows * 0.8)
-    # model = Lasso(alpha=0.9)
-    model = linear_model.LinearRegression(fit_intercept=fit_intercept)
     m, coeffs, intercept = train(model, n_train, x, ys)
     return test(m, n_train, x, ys), coeffs
 
@@ -37,10 +35,12 @@ def compare_1hot_vs_dummy():
     for error in [0, 10, 100, 1000]:
         ys = make_y(m, error=error)
         for intercept in [True, False]:
+            model = Lasso(alpha=(error/10) + 0.1)
+            # model = linear_model.LinearRegression(fit_intercept=fit_intercept)
             print("One hot encoding")
-            m_error, m_coeffs = train_and_check(m, ys, n_rows, intercept)
+            m_error, m_coeffs = train_and_check(m, ys, n_rows, model)
             print("Dummy variable encoding")
-            m_dropped_error, m_dropped_coeffs = train_and_check(m_dropped, ys, n_rows, intercept)
+            m_dropped_error, m_dropped_coeffs = train_and_check(m_dropped, ys, n_rows, model)
             delta_error = m_error - m_dropped_error
             print(("=== intercept = %s, Noise level = %.4f, difference in error %.4f (%.4f)" % (
                 intercept, error, delta_error, delta_error * 100 / m_error)))
