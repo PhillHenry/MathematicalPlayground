@@ -12,11 +12,15 @@ def standardize(m: np.ndarray) -> np.ndarray:
 
 
 def invert_and_standardize(m):
-    print(f"det(m_squared) = {np.linalg.det(square(m))}")
-
+    '''
+    Formula for calculating the co-efficients in a linear regression is:
+    β=(X′X)−1X′Y
+    '''
+    print(f"det((m'm)^-1)                            = {np.linalg.det(np.linalg.inv(np.dot(m.transpose(), m)))}")
+    print(f"det(m_squared)                           = {np.linalg.det(square(m))}")
+    # print(f"det((mm')^-1)                            = {np.linalg.det(np.linalg.inv(square(m)))}") # blows up because mm' is singular
     print(f"det(standardized(m) * standardized(m).T) = {np.linalg.det(square(standardize(m)))}")
-
-    print(f"det(standardized(m m.T) = {np.linalg.det(standardize(square(m)))}")
+    print(f"det(standardized(m m.T)                  = {np.linalg.det(standardize(square(m)))}")
 
 
 def add_value_col(m):
