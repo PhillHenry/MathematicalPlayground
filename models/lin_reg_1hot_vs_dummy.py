@@ -32,17 +32,18 @@ def compare_1hot_vs_dummy(error_to_model):
     n_cardinality = 5
     m = make_fake_1hot_encodings(drop_last=False, n_rows=n_rows, n_categories=n_categories, n_cardinality=n_cardinality)
     m_dropped = drop_last(m, n_categories, n_cardinality)
-    for error in [0, 10, 100, 1000]:
-        ys = make_y(m, error=error)
+    for noise in [0, 10, 100, 1000]:
+        ys = make_y(m, error=noise)
         for intercept in [True, False]:
-            model = error_to_model(error, intercept)
+            model = error_to_model(noise, intercept)
+            print("+" * 50)
+            print("Intercept = %s, Noise level = %.4f," % (intercept, noise))
             print("One hot encoding")
-            m_error, m_coeffs = train_and_check(m, ys, n_rows, model)
+            test_error, m_coeffs = train_and_check(m, ys, n_rows, model)
             print("Dummy variable encoding")
             m_dropped_error, m_dropped_coeffs = train_and_check(m_dropped, ys, n_rows, model)
-            delta_error = m_error - m_dropped_error
-            print(("=== intercept = %s, Noise level = %.4f, difference in error %.4f (%.4f)" % (
-                intercept, error, delta_error, delta_error * 100 / m_error)))
+            delta_error = test_error - m_dropped_error
+            print("Difference in error %.4f" % delta_error)
             print(f"non increasing coefficients: {num_non_increasing(m_coeffs, n_cardinality)}")
             print(f"non increasing dropped coefficients: {num_non_increasing(m_dropped_coeffs, n_cardinality - 1)}")
         print("-" * 50)
