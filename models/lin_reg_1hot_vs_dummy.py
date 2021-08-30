@@ -26,7 +26,7 @@ def num_non_increasing(xs, skip):
     return len([x for x in skipped if x < 0])
 
 
-def compare_1hot_vs_dummy():
+def compare_1hot_vs_dummy(error_to_model):
     n_rows = 1000
     n_categories = 4
     n_cardinality = 5
@@ -35,8 +35,7 @@ def compare_1hot_vs_dummy():
     for error in [0, 10, 100, 1000]:
         ys = make_y(m, error=error)
         for intercept in [True, False]:
-            model = Lasso(alpha=(error/10) + 0.1)
-            # model = linear_model.LinearRegression(fit_intercept=fit_intercept)
+            model = error_to_model(error)
             print("One hot encoding")
             m_error, m_coeffs = train_and_check(m, ys, n_rows, model)
             print("Dummy variable encoding")
@@ -51,5 +50,16 @@ def compare_1hot_vs_dummy():
 
 if __name__ == "__main__":
     np.set_printoptions(precision=3)
-    compare_1hot_vs_dummy()
+    print("\n========== Linear Regression ===========\n")
+
+    for fit_intercept in [True, False]:
+        def error_to_lr(error):
+            return linear_model.LinearRegression(fit_intercept=fit_intercept)
+        print(f"----------- fit_intercept = {fit_intercept} ------------")
+        compare_1hot_vs_dummy(error_to_lr)
+    print("\n========== Lasso ===========\n")
+
+    def error_to_lasso(error):
+        return Lasso(alpha=(error/10) + 0.1)
+    compare_1hot_vs_dummy(error_to_lasso)
 
