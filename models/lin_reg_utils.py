@@ -22,11 +22,8 @@ def test(regr, n_train, x, ys):
     y_pred = regr.predict(test_x)
 
     error = mean_squared_error(test_y, y_pred)
-    print('\tMean squared error: %.4f' % error)
-    print('\tCoefficient of determination: %.2f'
-          % r2_score(test_y, y_pred))
 
-    return error
+    return error, r2_score(test_y, y_pred)
 
 
 def check(x, ys, coeffs, intercept, index):

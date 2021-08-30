@@ -9,7 +9,8 @@ import random
 def train_and_check(x, ys, n_rows, model):
     n_train = int(n_rows * 0.8)
     m, coeffs, intercept = train(model, n_train, x, ys)
-    return test(m, n_train, x, ys), coeffs
+    error, r2 = test(m, n_train, x, ys)
+    return error, coeffs, r2
 
 
 def deltas(xs):
@@ -26,7 +27,7 @@ def num_non_increasing(xs, skip):
     return len([x for x in skipped if x < 0])
 
 
-def compare_1hot_vs_dummy(error_to_model):
+def compare_1hot_vs_dummy(model_function):
     n_rows = 1000
     n_categories = 4
     n_cardinality = 5
@@ -35,14 +36,18 @@ def compare_1hot_vs_dummy(error_to_model):
     for noise in [0, 10, 100, 1000]:
         ys = make_y(m, error=noise)
         for intercept in [True, False]:
-            model = error_to_model(noise, intercept)
+            model = model_function(noise, intercept)
             print("+" * 50)
             print("Intercept = %s, Noise level = %.4f," % (intercept, noise))
             print("One hot encoding")
-            test_error, m_coeffs = train_and_check(m, ys, n_rows, model)
+            test_error, m_coeffs, r2 = train_and_check(m, ys, n_rows, model)
+            print('\tMean squared error: %.4f' % test_error)
+            print('\tCoefficient of determination: %.2f' % r2)
             print("Dummy variable encoding")
-            m_dropped_error, m_dropped_coeffs = train_and_check(m_dropped, ys, n_rows, model)
-            delta_error = test_error - m_dropped_error
+            dummy_error, m_dropped_coeffs, r2 = train_and_check(m_dropped, ys, n_rows, model)
+            print('\tMean squared error: %.4f' % dummy_error)
+            print('\tCoefficient of determination: %.2f' % r2)
+            delta_error = test_error - dummy_error
             print("Difference in error %.4f" % delta_error)
             print(f"non increasing coefficients: {num_non_increasing(m_coeffs, n_cardinality)}")
             print(f"non increasing dropped coefficients: {num_non_increasing(m_dropped_coeffs, n_cardinality - 1)}")
@@ -58,6 +63,19 @@ def error_to_lasso(error, fit_intercept):
     return Lasso(alpha=(error/10) + 0.1)
 
 
+def compare_one_hot_to_dummy(noise):
+    n_rows = 1000
+    n_categories = 4
+    n_cardinality = 5
+    m = make_fake_1hot_encodings(drop_last=False, n_rows=n_rows, n_categories=n_categories, n_cardinality=n_cardinality)
+    m_dropped = drop_last(m, n_categories, n_cardinality)
+    ys = make_y(m, error=noise)
+    model = linear_model.LinearRegression(fit_intercept=True)
+    one_hot_error, _, _ = train_and_check(m, ys, n_rows, model)
+    dummy_error, _, _ = train_and_check(m_dropped, ys, n_rows, model)
+    return one_hot_error, dummy_error
+
+
 if __name__ == "__main__":
     np.set_printoptions(precision=3)
 
@@ -67,3 +85,9 @@ if __name__ == "__main__":
     print("\n========== Lasso ===========\n")
     compare_1hot_vs_dummy(error_to_lasso)
 
+    num_trials = 100
+    results = []
+    for _ in range(num_trials):
+        one_hot_error, dummy_error = compare_one_hot_to_dummy(noise=100)
+        results.append(one_hot_error - dummy_error)
+    print("num trials = %d, mean = %.4f, std_dev = %.4f" % (num_trials, np.mean(results), np.std(results)))
