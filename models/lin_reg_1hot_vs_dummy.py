@@ -76,6 +76,34 @@ def compare_one_hot_to_dummy(noise):
     return one_hot_error, dummy_error
 
 
+def hypothesis_test(xs: list, ys: list):
+    l = len(xs)
+    n_samples = l * 10
+    assert l == len(ys)
+    results = []
+    for _ in range(n_samples):
+        x = xs[random.randint(0, l - 1)]
+        y = ys[random.randint(0, l - 1)]
+        results.append(x - y)
+    return results
+
+
+def compare_errors(noise=100):
+    num_trials = 1000
+    results = []
+    one_hot_errors = []
+    dummy_errors = []
+    for _ in range(num_trials):
+        one_hot_error, dummy_error = compare_one_hot_to_dummy(noise)
+        results.append(one_hot_error - dummy_error)
+        one_hot_errors.append(one_hot_error)
+        dummy_errors.append(dummy_error)
+    print("num trials = %d, mean = %.4f, std_dev = %.4f" % (num_trials, np.mean(results), np.std(results)))
+    results = hypothesis_test(one_hot_errors, dummy_errors)
+    p_value = len([x for x in results if x > 0]) / len(results)
+    print(f"p-value dummy variables better than one-hot encoding: {p_value}")
+
+
 if __name__ == "__main__":
     np.set_printoptions(precision=3)
 
@@ -85,9 +113,5 @@ if __name__ == "__main__":
     print("\n========== Lasso ===========\n")
     compare_1hot_vs_dummy(error_to_lasso)
 
-    num_trials = 100
-    results = []
-    for _ in range(num_trials):
-        one_hot_error, dummy_error = compare_one_hot_to_dummy(noise=100)
-        results.append(one_hot_error - dummy_error)
-    print("num trials = %d, mean = %.4f, std_dev = %.4f" % (num_trials, np.mean(results), np.std(results)))
+    compare_errors(noise=10)
+
