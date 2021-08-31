@@ -27,7 +27,7 @@ def num_non_increasing(xs, skip):
     return len([x for x in skipped if x < 0])
 
 
-def compare_1hot_vs_dummy(model_function):
+def compare_1hot_vs_dummy(model):
     n_rows = 1000
     n_categories = 4
     n_cardinality = 5
@@ -35,32 +35,22 @@ def compare_1hot_vs_dummy(model_function):
     m_dropped = drop_last(m, n_categories, n_cardinality)
     for noise in [0, 10, 100, 1000]:
         ys = make_y(m, error=noise)
-        for intercept in [True, False]:
-            model = model_function(noise, intercept)
-            print("+" * 50)
-            print("Intercept = %s, Noise level = %.4f," % (intercept, noise))
-            print("One hot encoding")
-            test_error, m_coeffs, r2 = train_and_check(m, ys, n_rows, model)
-            print('\tMean squared error: %.4f' % test_error)
-            print('\tCoefficient of determination: %.2f' % r2)
-            print("Dummy variable encoding")
-            dummy_error, m_dropped_coeffs, r2 = train_and_check(m_dropped, ys, n_rows, model)
-            print('\tMean squared error: %.4f' % dummy_error)
-            print('\tCoefficient of determination: %.2f' % r2)
-            delta_error = test_error - dummy_error
-            print("Difference in error %.4f" % delta_error)
-            print(f"non increasing coefficients: {num_non_increasing(m_coeffs, n_cardinality)}")
-            print(f"non increasing dropped coefficients: {num_non_increasing(m_dropped_coeffs, n_cardinality - 1)}")
+        print("+" * 50)
+        print("Noise level = %.4f," % noise)
+        print("One hot encoding")
+        test_error, m_coeffs, r2 = train_and_check(m, ys, n_rows, model)
+        print('\tMean squared error: %.4f' % test_error)
+        print('\tCoefficient of determination: %.2f' % r2)
+        print("Dummy variable encoding")
+        dummy_error, m_dropped_coeffs, r2 = train_and_check(m_dropped, ys, n_rows, model)
+        print('\tMean squared error: %.4f' % dummy_error)
+        print('\tCoefficient of determination: %.2f' % r2)
+        delta_error = test_error - dummy_error
+        print("Difference in error %.4f" % delta_error)
+        print(f"non increasing coefficients: {num_non_increasing(m_coeffs, n_cardinality)}")
+        print(f"non increasing dropped coefficients: {num_non_increasing(m_dropped_coeffs, n_cardinality - 1)}")
         print("-" * 50)
         print("")
-
-
-def error_to_lr(error, fit_intercept):
-    return linear_model.LinearRegression(fit_intercept=fit_intercept)
-
-
-def error_to_lasso(error, fit_intercept):
-    return Lasso(alpha=(error/10) + 0.1)
 
 
 def compare_one_hot_to_dummy(noise):
@@ -108,10 +98,13 @@ if __name__ == "__main__":
     np.set_printoptions(precision=3)
 
     print("\n========== Linear Regression ===========\n")
-    compare_1hot_vs_dummy(error_to_lr)
+    for intercept in [True, False]:
+        print("Intercept = %s" % intercept)
+        model = linear_model.LinearRegression(fit_intercept=intercept)
+        compare_1hot_vs_dummy(model)
 
     print("\n========== Lasso ===========\n")
-    compare_1hot_vs_dummy(error_to_lasso)
+    compare_1hot_vs_dummy(Lasso())
 
     compare_errors(noise=10)
 
