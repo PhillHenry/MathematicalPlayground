@@ -21,6 +21,7 @@ def p_values(intercept_, coef_, n, X, y):
     # estimate the covariance matrix for beta
     x1_squared = X1.T @ X1
     x1_squared = x1_squared + (np.eye(x1_squared.shape[1]) * 0.0001)
+    print("Condition number", np.linalg.norm(x1_squared) * np.linalg.norm(np.linalg.inv(x1_squared)))
     beta_cov = np.linalg.inv(x1_squared)
     # the t-test statistic for each variable from the formula from above figure
     t_vals = beta_hat / (sigma_hat * np.sqrt(np.diagonal(beta_cov)))
@@ -28,6 +29,7 @@ def p_values(intercept_, coef_, n, X, y):
     p_vals = t.sf(np.abs(t_vals), n-X1.shape[1])*2
     # print(f"t-values = {t_vals}")
     print(f"p-values = {p_vals}")
+
 
 
 def train_and_check(x, ys, n_rows, model):
