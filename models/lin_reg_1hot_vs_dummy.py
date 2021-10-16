@@ -6,10 +6,33 @@ from data.one_hot_encodings import make_fake_1hot_encodings, make_y, make_target
 import random
 
 
+def p_values(intercept_, coef_, n, X, y):
+    '''
+    From https://stackoverflow.com/questions/27928275/find-p-value-significance-in-scikit-learn-linearregression
+    '''
+    beta_hat = [intercept_] + coef_.tolist()
+
+    # compute the p-values
+    from scipy.stats import t
+    # add ones column
+    X1 = np.column_stack((np.ones(n), X))
+    # standard deviation of the noise.
+    sigma_hat = np.sqrt(np.sum(np.square(y - X1@beta_hat)) / (n - X1.shape[1]))
+    # estimate the covariance matrix for beta
+    beta_cov = np.linalg.inv(X1.T@X1)
+    # the t-test statistic for each variable from the formula from above figure
+    t_vals = beta_hat / (sigma_hat * np.sqrt(np.diagonal(beta_cov)))
+    # compute 2-sided p-values.
+    p_vals = t.sf(np.abs(t_vals), n-X1.shape[1])*2
+    print(f"t-values = {t_vals}")
+    print(f"p-values = {p_vals}")
+
+
 def train_and_check(x, ys, n_rows, model):
     n_train = int(n_rows * 0.8)
     m, coeffs, intercept = train(model, n_train, x, ys)
     error, r2 = test(m, n_train, x, ys)
+    # p_values(intercept, coeffs, n_rows, x, ys)  # causes numpy.linalg.LinAlgError: Singular matrix
     return error, coeffs, r2
 
 
@@ -56,7 +79,7 @@ def compare_1hot_vs_dummy(model):
 def compare_one_hot_to_dummy(noise):
     n_rows = 1000
     n_categories = 4
-    n_cardinality = 5
+    n_cardinality = 20
     m = make_fake_1hot_encodings(drop_last=False, n_rows=n_rows, n_categories=n_categories, n_cardinality=n_cardinality)
     m_dropped = drop_last(m, n_categories, n_cardinality)
     ys = make_y(m, error=noise)
@@ -106,5 +129,5 @@ if __name__ == "__main__":
     print("\n========== Lasso ===========\n")
     compare_1hot_vs_dummy(Lasso())
 
-    compare_errors(noise=10)
+    #compare_errors(noise=10)  # expensive and shows no significant difference between 1-hot and dummy vars
 
