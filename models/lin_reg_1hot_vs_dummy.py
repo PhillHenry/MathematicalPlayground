@@ -19,12 +19,14 @@ def p_values(intercept_, coef_, n, X, y):
     # standard deviation of the noise.
     sigma_hat = np.sqrt(np.sum(np.square(y - X1@beta_hat)) / (n - X1.shape[1]))
     # estimate the covariance matrix for beta
-    beta_cov = np.linalg.inv(X1.T@X1)
+    x1_squared = X1.T @ X1
+    x1_squared = x1_squared + (np.eye(x1_squared.shape[1]) * 0.0001)
+    beta_cov = np.linalg.inv(x1_squared)
     # the t-test statistic for each variable from the formula from above figure
     t_vals = beta_hat / (sigma_hat * np.sqrt(np.diagonal(beta_cov)))
     # compute 2-sided p-values.
     p_vals = t.sf(np.abs(t_vals), n-X1.shape[1])*2
-    print(f"t-values = {t_vals}")
+    # print(f"t-values = {t_vals}")
     print(f"p-values = {p_vals}")
 
 
@@ -32,7 +34,7 @@ def train_and_check(x, ys, n_rows, model):
     n_train = int(n_rows * 0.8)
     m, coeffs, intercept = train(model, n_train, x, ys)
     error, r2 = test(m, n_train, x, ys)
-    # p_values(intercept, coeffs, n_rows, x, ys)  # causes numpy.linalg.LinAlgError: Singular matrix
+    p_values(intercept, coeffs, n_rows, x, ys)  # causes numpy.linalg.LinAlgError: Singular matrix
     return error, coeffs, r2
 
 
