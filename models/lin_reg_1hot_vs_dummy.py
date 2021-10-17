@@ -68,7 +68,7 @@ class OneHotVsDummyResults:
         self.dummy_results = dummy_results
 
 
-def compare_1hot_vs_dummy(model) -> dict:
+def compare_1hot_vs_dummy(model) -> dict:  #[int, OneHotVsDummyResults]:
     n_rows = 1000
     n_categories = 4
     n_cardinality = 5
@@ -96,7 +96,7 @@ def compare_1hot_vs_dummy(model) -> dict:
         print("-" * 50)
         print("")
         noise_to_results[noise] = OneHotVsDummyResults(one_hot, dummy)
-    return dict
+    return noise_to_results
 
 
 def compare_one_hot_to_dummy(noise):
