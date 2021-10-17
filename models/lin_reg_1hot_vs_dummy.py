@@ -20,14 +20,16 @@ def p_values(intercept_, coef_, n, X, y):
     sigma_hat = np.sqrt(np.sum(np.square(y - X1@beta_hat)) / (n - X1.shape[1]))
     # estimate the covariance matrix for beta
     x1_squared = X1.T @ X1
-    x1_squared = x1_squared + (np.eye(x1_squared.shape[1]) * 0.0001)
+    x1_squared = x1_squared + (np.eye(x1_squared.shape[1]))
     print("Condition number", np.linalg.norm(x1_squared) * np.linalg.norm(np.linalg.inv(x1_squared)))
     beta_cov = np.linalg.inv(x1_squared)
     # the t-test statistic for each variable from the formula from above figure
-    t_vals = beta_hat / (sigma_hat * np.sqrt(np.diagonal(beta_cov)))
+    sqrt_diagonal = np.sqrt(np.diagonal(beta_cov))
+    print(f"sigma_hat = {sigma_hat}, sqrt_diagonal = {sqrt_diagonal}")
+    t_vals = beta_hat / (sigma_hat * sqrt_diagonal)
     # compute 2-sided p-values.
     p_vals = t.sf(np.abs(t_vals), n-X1.shape[1])*2
-    # print(f"t-values = {t_vals}")
+    print(f"t-values = {t_vals}")
     print(f"p-values = {p_vals}")
     return p_vals
 

@@ -5,9 +5,7 @@ import matplotlib.pyplot as plt
 import math as math
 
 
-def add_pvalue_bar_chart():
-    global p_values
-    p_values = results.p_values
+def add_pvalue_bar_chart(p_values, ax):
     xs = []
     indices = []
     for i, x in enumerate(p_values):
@@ -15,7 +13,7 @@ def add_pvalue_bar_chart():
             xs.append(math.log(x))
             indices.append(i)
     rects1 = ax.bar(indices, xs)
-    ax.set_ylabel('Scores')
+    ax.set_ylabel('log(p-value)')
     ax.set_title(f"noise = {noise}")
     ax.set_xticks(indices)
 
@@ -35,10 +33,5 @@ if __name__ == "__main__":
     for index, noise in enumerate(sorted(noisy_keys)):
         ax = plt.subplot((n * 100) + 10 + index + 1)
         one_hot_vs_dummy = noise_to_results[noise]
-        results = one_hot_vs_dummy.dummy_results
-        add_pvalue_bar_chart()
-        # ax.legend()
-
-        # ax.bar_label(rects1, padding=3)
-
+        add_pvalue_bar_chart(one_hot_vs_dummy.dummy_results.p_values, ax)
     plt.show()
