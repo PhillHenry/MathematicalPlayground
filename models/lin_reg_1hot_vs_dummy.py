@@ -29,15 +29,15 @@ def p_values(intercept_, coef_, n, X, y):
     p_vals = t.sf(np.abs(t_vals), n-X1.shape[1])*2
     # print(f"t-values = {t_vals}")
     print(f"p-values = {p_vals}")
-
+    return p_vals
 
 
 def train_and_check(x, ys, n_rows, model):
     n_train = int(n_rows * 0.8)
     m, coeffs, intercept = train(model, n_train, x, ys)
     error, r2 = test(m, n_train, x, ys)
-    p_values(intercept, coeffs, n_rows, x, ys)  # causes numpy.linalg.LinAlgError: Singular matrix
-    return error, coeffs, r2
+    p_vals = p_values(intercept, coeffs, n_rows, x, ys)  # causes numpy.linalg.LinAlgError: Singular matrix
+    return error, coeffs, r2, p_vals
 
 
 def deltas(xs):
@@ -54,22 +54,39 @@ def num_non_increasing(xs, skip):
     return len([x for x in skipped if x < 0])
 
 
-def compare_1hot_vs_dummy(model):
+class Results:
+    def __init__(self, error, m_coeffs, r2, p_vals):
+        self.error = error
+        self.coefficients = m_coeffs
+        self.r2 = r2
+        self.p_values = p_vals
+
+
+class OneHotVsDummyResults:
+    def __init__(self, one_hot: Results, dummy_results: Results):
+        self.one_hot = one_hot
+        self.dummy_results = dummy_results
+
+
+def compare_1hot_vs_dummy(model) -> dict:
     n_rows = 1000
     n_categories = 4
     n_cardinality = 5
     m = make_fake_1hot_encodings(drop_last=False, n_rows=n_rows, n_categories=n_categories, n_cardinality=n_cardinality)
     m_dropped = drop_last(m, n_categories, n_cardinality)
+    noise_to_results = {}
     for noise in [0, 10, 100, 1000]:
         ys = make_y(m, error=noise)
         print("+" * 50)
         print("Noise level = %.4f," % noise)
         print("One hot encoding")
-        test_error, m_coeffs, r2 = train_and_check(m, ys, n_rows, model)
+        test_error, m_coeffs, r2, p_vals = train_and_check(m, ys, n_rows, model)
+        one_hot = Results(test_error, m_coeffs, r2, p_vals)
         print('\tMean squared error: %.4f' % test_error)
         print('\tCoefficient of determination: %.2f' % r2)
         print("Dummy variable encoding")
-        dummy_error, m_dropped_coeffs, r2 = train_and_check(m_dropped, ys, n_rows, model)
+        dummy_error, m_dropped_coeffs, r2, dummy_p_vals = train_and_check(m_dropped, ys, n_rows, model)
+        dummy = Results(dummy_error, m_dropped_coeffs, r2, dummy_p_vals)
         print('\tMean squared error: %.4f' % dummy_error)
         print('\tCoefficient of determination: %.2f' % r2)
         delta_error = test_error - dummy_error
@@ -78,6 +95,8 @@ def compare_1hot_vs_dummy(model):
         print(f"non increasing dropped coefficients: {num_non_increasing(m_dropped_coeffs, n_cardinality - 1)}")
         print("-" * 50)
         print("")
+        noise_to_results[noise] = OneHotVsDummyResults(one_hot, dummy)
+    return dict
 
 
 def compare_one_hot_to_dummy(noise):
@@ -88,8 +107,8 @@ def compare_one_hot_to_dummy(noise):
     m_dropped = drop_last(m, n_categories, n_cardinality)
     ys = make_y(m, error=noise)
     model = linear_model.LinearRegression(fit_intercept=True)
-    one_hot_error, _, _ = train_and_check(m, ys, n_rows, model)
-    dummy_error, _, _ = train_and_check(m_dropped, ys, n_rows, model)
+    one_hot_error, _, _, _ = train_and_check(m, ys, n_rows, model)
+    dummy_error, _, _, _ = train_and_check(m_dropped, ys, n_rows, model)
     return one_hot_error, dummy_error
 
 
