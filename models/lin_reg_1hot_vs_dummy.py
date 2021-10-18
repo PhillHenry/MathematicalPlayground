@@ -1,9 +1,11 @@
+import random
+
+import numpy as np
 from sklearn import linear_model
 from sklearn.linear_model._coordinate_descent import Lasso
-import numpy as np
-from models.lin_reg_utils import train, check, check_row, test
-from data.one_hot_encodings import make_fake_1hot_encodings, make_y, make_target, drop_last
-import random
+
+from data.one_hot_encodings import make_fake_1hot_encodings, make_y, drop_last
+from models.lin_reg_utils import train, test
 
 
 def p_values(intercept_, coef_, n, X, y):
