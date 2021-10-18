@@ -70,14 +70,14 @@ class OneHotVsDummyResults:
         self.dummy_results = dummy_results
 
 
-def compare_1hot_vs_dummy(model) -> dict:  #[int, OneHotVsDummyResults]:
+def compare_1hot_vs_dummy(model, noise_levels=[0, 10, 100, 1000]) -> dict:  #[int, OneHotVsDummyResults]:
     n_rows = 1000
     n_categories = 4
     n_cardinality = 5
     m = make_fake_1hot_encodings(drop_last=False, n_rows=n_rows, n_categories=n_categories, n_cardinality=n_cardinality)
     m_dropped = drop_last(m, n_categories, n_cardinality)
     noise_to_results = {}
-    for noise in [0, 10, 100, 1000]:
+    for noise in noise_levels:
         ys = make_y(m, error=noise)
         print("+" * 50)
         print("Noise level = %.4f," % noise)
