@@ -22,6 +22,9 @@ def p_values(intercept_, coef_, n, X, y):
     sigma_hat = np.sqrt(np.sum(np.square(y - X1@beta_hat)) / (n - X1.shape[1]))
     # estimate the covariance matrix for beta
     x1_squared = X1.T @ X1
+    # Penalization will make the model identifiable, but redundant coding will still affect the
+    # parameter values in weird ways, given the above.
+    # https://stats.stackexchange.com/questions/290526/problems-with-one-hot-encoding-vs-dummy-encoding
     x1_squared = x1_squared + (np.eye(x1_squared.shape[1]))
     print("Condition number", np.linalg.norm(x1_squared) * np.linalg.norm(np.linalg.inv(x1_squared)))
     beta_cov = np.linalg.inv(x1_squared)
@@ -145,6 +148,12 @@ def compare_errors(noise=100):
 
 
 if __name__ == "__main__":
+    '''
+    [In regularized regression], the intercept is not penalized, so if you are inferring the effect 
+    of a level as not part of the intercept, its hard to say you are penalizing all levels equally. 
+    Instead, always include all the levels, so each is symmetric with respect to the penalty.
+    https://stats.stackexchange.com/questions/290526/problems-with-one-hot-encoding-vs-dummy-encoding
+    '''
     np.set_printoptions(precision=3)
 
     print("\n========== Linear Regression ===========\n")
