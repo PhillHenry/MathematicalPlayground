@@ -25,6 +25,8 @@ if __name__ == "__main__":
     generating process (linear regression model) either by some theoretical or any other reasons is 
     forced to go through the origin."
     https://stats.stackexchange.com/questions/7948/when-is-it-ok-to-remove-the-intercept-in-a-linear-regression-model
+    
+    Although look at the answer below on situations where it might be useful.
     '''
     model = Lasso()  #linear_model.LinearRegression(fit_intercept=True)
     noise_to_results = compare_1hot_vs_dummy(model, [8,16,32,64,128,256,512])
