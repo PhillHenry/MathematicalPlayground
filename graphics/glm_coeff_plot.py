@@ -1,8 +1,10 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib
+import numpy as np
 import matplotlib.pyplot as plt
 import sys
+import re as re
 
 
 def interesting(fun):
@@ -13,18 +15,22 @@ def interesting(fun):
         ~fun["feature"].str.contains("RTT")]
 
 
-def plot(df, c):
-    plt.scatter(df.coefficients, df.standard_error, c=c)
+def plot(df, c, label):
+    plt.scatter(df.coefficients, np.log(df.standard_error), c=c, label=label)
 
 
 if __name__ == '__main__':
-    colours = ['r', 'b']
+    colours = ['r', 'b', 'g']
     for i, file in enumerate(sys.argv[1:]):
-        print(f"Reading {file}")
+        label = re.sub(".*/", "", file)
+        label = re.sub("\..*", "", label)
+        print(f"Reading {file} and giving it label {label}")
         df = pd.read_csv(file, sep="\t")
-        cleaned = df[(df["p_values"] < 0.05) & ((df["coefficients"] > 0.1) | (df["coefficients"] < -0.1))]
+        cleaned = df[(df["p_values"] < 0.05)
+                     & ((df["coefficients"] > 0.1) | (df["coefficients"] < -0.1))]
         significant = interesting(cleaned)
-        plot(significant, colours[i])
+        plot(significant, colours[i], label)
     plt.xlabel("Coefficients")
-    plt.ylabel("Standard error")
+    plt.ylabel("Log standard error")
+    plt.legend()
     plt.show()
