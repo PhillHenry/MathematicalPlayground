@@ -25,7 +25,7 @@ def plot(df, c, label):
 if __name__ == '__main__':
     colours = ['r', 'b', 'g']
     files = sys.argv[1:]
-
+    labels =[]
     for i, file in enumerate(files):
         label = re.sub(".*/", "", file)
         label = re.sub("\..*", "", label)
@@ -39,10 +39,11 @@ if __name__ == '__main__':
         significant = interesting(cleaned)
         # print(significant[[FEATURE, COEFFICIENTS, "standard_error"]])
         plot(significant, colours[i], label)
+        labels.append(label)
     lgnd = plt.legend(loc="lower right", numpoints=len(files), fontsize=10)
     for i in range(len(files)):
         lgnd.legendHandles[i]._sizes = [30]
     plt.xlabel("Log |coefficients|")
     plt.ylabel("Log standard error")
-    # plt.legend()
+    plt.savefig(f"/tmp/{'-'.join(labels)}.png")
     plt.show()
