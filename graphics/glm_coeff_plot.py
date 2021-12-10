@@ -1,19 +1,18 @@
-import pandas as pd
-import seaborn as sns
-import matplotlib
-import numpy as np
-import matplotlib.pyplot as plt
-import sys
 import re as re
+import sys
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 COEFFICIENTS = "coefficients"
+FEATURE = "feature"
 
 
 def interesting(fun):
-    return fun[fun["feature"].str.contains("ethnic") |
-               ~fun["feature"].str.contains("deprivation") |
-               ~fun["feature"].str.contains("decile")]
+    return fun[fun[FEATURE].str.contains("ethnic") |
+               fun[FEATURE].str.contains("deprivation") |
+               fun[FEATURE].str.contains("decile")]
 
 
 def plot(df, c, label):
@@ -32,13 +31,13 @@ if __name__ == '__main__':
         label = re.sub("\..*", "", label)
         print(f"{i} Reading {file} and giving it label {label}")
         df = pd.read_csv(file, sep="\t")
-        # if "1hot" not in label:
         # 'correct' IMDs if they're deciles
-        df[COEFFICIENTS] = np.where(df["feature"].str.contains("imd19_decile"), df[
+        df[COEFFICIENTS] = np.where(df[FEATURE].str.contains("imd19_decile"), df[
             COEFFICIENTS] * 10, df[COEFFICIENTS])
         cleaned = df[(df["p_values"] < 0.05)
                      & ((df[COEFFICIENTS] > 0.1) | (df[COEFFICIENTS] < -0.1))]
         significant = interesting(cleaned)
+        # print(significant[[FEATURE, COEFFICIENTS, "standard_error"]])
         plot(significant, colours[i], label)
     lgnd = plt.legend(loc="lower right", numpoints=len(files), fontsize=10)
     for i in range(len(files)):
