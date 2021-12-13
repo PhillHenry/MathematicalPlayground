@@ -29,4 +29,5 @@ if __name__ == '__main__':
     plt.xticks(range(42), df['stp_code'], rotation='vertical')
     ax.legend()
     lgnd = plt.legend(loc="lower right", numpoints=len(files), fontsize=10)
+    plt.savefig(f"/tmp/{'-'.join(labels)}.png")
     plt.show()
