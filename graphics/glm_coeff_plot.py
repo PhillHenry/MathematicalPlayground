@@ -15,15 +15,17 @@ def interesting(fun):
                fun[FEATURE].str.contains("decile")]
 
 
-def plot(df, c, label):
+def plot(df, c, label, marker=None):
     plt.scatter(np.log(df[COEFFICIENTS].abs()), np.log(df.standard_error), c=c, label=label,
-                s=np.log((1/df["p_values"]))
-                # s=2
+                # s=np.log((1/df["p_values"])) * 0.1
+                # s=10,
+                marker=marker
                 )
 
 
 if __name__ == '__main__':
-    colours = ['r', 'b', 'g']
+    colours = ['r', 'b', 'g', 'y', 'k', 'c', 'm']
+    markers = ["1", "2", "3", "4", "s", "p", "P"]
     files = sys.argv[1:]
     labels =[]
     for i, file in enumerate(files):
@@ -37,8 +39,8 @@ if __name__ == '__main__':
         cleaned = df[(df["p_values"] < 0.05)
                      & ((df[COEFFICIENTS] > 0.1) | (df[COEFFICIENTS] < -0.1))]
         significant = interesting(cleaned)
-        # print(significant[[FEATURE, COEFFICIENTS, "standard_error"]])
-        plot(significant, colours[i], label)
+        print(f"Number of significant features for {label} = {len(significant)}")
+        plot(significant, colours[i], label, markers[i])
         labels.append(label)
     lgnd = plt.legend(loc="lower right", numpoints=len(files), fontsize=10)
     for i in range(len(files)):
