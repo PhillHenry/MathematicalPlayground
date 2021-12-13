@@ -23,28 +23,38 @@ def plot(df, c, label, marker=None):
                 )
 
 
+def read_and_massage(file):
+    df, label = df_and_label_for(file)
+    # 'correct' IMDs if they're deciles
+    df[COEFFICIENTS] = np.where(df[FEATURE].str.contains("imd19_decile"), df[
+        COEFFICIENTS] * 10, df[COEFFICIENTS])
+    cleaned = df[(df["p_values"] < 0.05)
+                 & ((df[COEFFICIENTS] > 0.1) | (df[COEFFICIENTS] < -0.1))]
+    significant = interesting(cleaned)
+    print(f"Number of significant features for {label} = {len(significant)}")
+    return significant, label
+
+
+def df_and_label_for(file):
+    label = re.sub(".*/", "", file)
+    label = re.sub("\..*", "", label)
+    print(f"Reading {file} and giving it label {label}")
+    df = pd.read_csv(file, sep="\t")
+    return df, label
+
+
 if __name__ == '__main__':
     colours = ['r', 'b', 'g', 'y', 'k', 'c', 'm']
     markers = ["1", "2", "3", "4", "s", "p", "P"]
     files = sys.argv[1:]
     labels =[]
     for i, file in enumerate(files):
-        label = re.sub(".*/", "", file)
-        label = re.sub("\..*", "", label)
-        print(f"{i} Reading {file} and giving it label {label}")
-        df = pd.read_csv(file, sep="\t")
-        # 'correct' IMDs if they're deciles
-        df[COEFFICIENTS] = np.where(df[FEATURE].str.contains("imd19_decile"), df[
-            COEFFICIENTS] * 10, df[COEFFICIENTS])
-        cleaned = df[(df["p_values"] < 0.05)
-                     & ((df[COEFFICIENTS] > 0.1) | (df[COEFFICIENTS] < -0.1))]
-        significant = interesting(cleaned)
-        print(f"Number of significant features for {label} = {len(significant)}")
-        plot(significant, colours[i], label, markers[i])
+        df, label = read_and_massage(file)
+        plot(df, colours[i], label, markers[i])
         labels.append(label)
     lgnd = plt.legend(loc="lower right", numpoints=len(files), fontsize=10)
-    for i in range(len(files)):
-        lgnd.legendHandles[i]._sizes = [30]
+    # for i in range(len(files)):
+    #     lgnd.legendHandles[i]._sizes = [30]
     plt.xlabel("Log |coefficients|")
     plt.ylabel("Log standard error")
     plt.savefig(f"/tmp/{'-'.join(labels)}.png")
