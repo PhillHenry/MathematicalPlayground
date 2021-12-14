@@ -23,7 +23,7 @@ if __name__ == '__main__':
                      (df['log_likelihood'].abs() / 1000),
                      color=colours[i],
                      label=label,
-                      width=0.5)
+                     width=0.5)
         labels.append(label)
         bars.append(bar)
     plt.xticks(range(42), df['stp_code'], rotation='vertical')

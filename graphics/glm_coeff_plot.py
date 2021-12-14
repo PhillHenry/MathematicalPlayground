@@ -44,8 +44,8 @@ def df_and_label_for(file):
 
 
 if __name__ == '__main__':
-    colours = ['r', 'b', 'g', 'y', 'k', 'c', 'm']
-    markers = ["1", "2", "3", "4", "s", "p", "P"]
+    colours = ['r', 'b', 'g', 'y', 'c', 'k', 'm']
+    markers = ["1", "2", "3", "4", "P", "s", "p"]
     files = sys.argv[1:]
     labels =[]
     for i, file in enumerate(files):
