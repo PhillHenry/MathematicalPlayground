@@ -18,7 +18,12 @@ def invert_and_standardize(m):
     '''
     print(f"det((m'm)^-1)                            = {np.linalg.det(np.linalg.inv(np.dot(m.transpose(), m)))}")
     print(f"det(m_squared)                           = {np.linalg.det(square(m))}")
-    # print(f"det((mm')^-1)                            = {np.linalg.det(np.linalg.inv(square(m)))}") # blows up because mm' is singular
+    msg = "det((mm')^-1)                            = "
+    try:
+        det_invert = np.linalg.det(np.linalg.inv(square(m)))
+        print(msg, det_invert)  # blows up because mm' is singular
+    except Exception as e:
+        print(f"{msg}Could not find det((mm')^-1. Error = {e}")
     print(f"det(standardized(m) * standardized(m).T) = {np.linalg.det(square(standardize(m)))}")
     print(f"det(standardized(m m.T)                  = {np.linalg.det(standardize(square(m)))}")
 

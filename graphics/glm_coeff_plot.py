@@ -52,6 +52,7 @@ if __name__ == '__main__':
         df, label = read_and_massage(file)
         plot(df, colours[i], label, markers[i])
         labels.append(label)
+    print(df)
     lgnd = plt.legend(loc="lower right", numpoints=len(files), fontsize=10)
     # for i in range(len(files)):
     #     lgnd.legendHandles[i]._sizes = [30]
