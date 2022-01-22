@@ -29,7 +29,7 @@ def make_y(x, intercept=42, error=0):
 
 
 def make_target(row, intercept=42, error=0):
-    return sum([a * (b + 1) for b, a in enumerate(row)]) + 42 + (error * random.gauss(0, 1))
+    return sum([a * (b + 1) for b, a in enumerate(row)]) + intercept + (error * random.gauss(0, 1))
 
 
 def drop_last(m, n_categories, n_cardinality):

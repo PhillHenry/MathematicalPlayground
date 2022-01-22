@@ -34,6 +34,19 @@ def add_value_col(m):
     return np.hstack((m, ys))
 
 
+def det_of_square_matrix(drop_last: bool):
+    print(f"\nSquare one hot encoding when dropping the last element is {drop_last}")
+    n_rows = 100
+    n_categories = 20
+    if drop_last:
+        n_rows = n_rows - n_categories
+    square_matrix = make_fake_1hot_encodings(drop_last=drop_last,
+                                             n_rows=n_rows,
+                                             n_categories=n_categories,
+                                             n_cardinality=5)
+    print(f"{np.linalg.det(square_matrix)} for matrix of shape {np.shape(square_matrix)}")
+
+
 if __name__ == "__main__":
     print("\ndrop_last=True")
     m = make_fake_1hot_encodings(drop_last=True)
@@ -43,7 +56,7 @@ if __name__ == "__main__":
     m = make_fake_1hot_encodings(drop_last=False)
     invert_and_standardize(m)
 
-    print("\ndrop_last=False, add values added")
+    print("\ndrop_last=False, add column exactly correlated to others")
     m = add_value_col(make_fake_1hot_encodings(drop_last=False, n_rows=1001))
     invert_and_standardize(m)
 
@@ -60,9 +73,7 @@ if __name__ == "__main__":
                                                n_rows=((n_categories * (n_cardinality - 1)) + 1)))
     print(f"\ncoincidentally square matrix {np.shape(m)} det = {np.linalg.det(square(m))}")
 
-    print("\nSquare one hot encoding")
-    square_matrix = make_fake_1hot_encodings(drop_last=False, n_rows=100, n_categories=20,
-                                             n_cardinality=5)
-    print(np.linalg.det(square_matrix))
+    det_of_square_matrix(False)
+    det_of_square_matrix(True)
     print("\nrandom matrix")
     print(np.linalg.det(np.random.rand(100, 100)))
