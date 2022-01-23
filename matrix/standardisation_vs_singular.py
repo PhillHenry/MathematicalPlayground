@@ -53,18 +53,26 @@ def det_of_square_matrix(drop_last: bool):
     print(f"determinant(mTm) = {np.linalg.det(mTm(square_matrix))} for matrix of shape {np.shape(square_matrix)}")
 
 
-if __name__ == "__main__":
-    print("\ndrop_last=True")
+def invert_and_standardized_1hot(drop_last):
+    print(f"\ndrop_last={drop_last}")
     m = make_fake_1hot_encodings(drop_last=True)
     invert_and_standardize(m)
 
-    print("\ndrop_last=False")
-    m = make_fake_1hot_encodings(drop_last=False)
-    invert_and_standardize(m)
 
+def examine_with_correlated_column(drop_last):
     print("\ndrop_last=False, add column exactly correlated to others")
     m = add_value_col(make_fake_1hot_encodings(drop_last=False, n_rows=1001))
     invert_and_standardize(m)
+
+
+if __name__ == "__main__":
+    invert_and_standardized_1hot(drop_last=True)
+
+    invert_and_standardized_1hot(drop_last=False)
+
+    examine_with_correlated_column(drop_last=True)
+
+    examine_with_correlated_column(drop_last=False)
 
     n_categories = 4
     n_cardinality = 5
