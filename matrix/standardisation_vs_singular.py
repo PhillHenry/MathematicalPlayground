@@ -55,7 +55,7 @@ def det_of_square_matrix(drop_last: bool):
 
 def invert_and_standardized_1hot(drop_last):
     print(f"\ndrop_last={drop_last}")
-    m = make_fake_1hot_encodings(drop_last=True)
+    m = make_fake_1hot_encodings(drop_last=drop_last)
     invert_and_standardize(m)
 
 
