@@ -60,8 +60,8 @@ def invert_and_standardized_1hot(drop_last):
 
 
 def examine_with_correlated_column(drop_last):
-    print("\ndrop_last=False, add column exactly correlated to others")
-    m = add_value_col(make_fake_1hot_encodings(drop_last=False, n_rows=1001))
+    print(f"\ndrop_last={drop_last}, add column exactly correlated to others")
+    m = add_value_col(make_fake_1hot_encodings(drop_last=drop_last, n_rows=1001))
     invert_and_standardize(m)
 
 
