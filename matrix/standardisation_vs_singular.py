@@ -17,16 +17,18 @@ def invert_and_standardize(m):
     β=(X′X)−1X′Y
     '''
     print(f"det((m'm))                               = {np.linalg.det(mTm(m))}")
-    print(f"det((m'm)^-1)                            = {np.linalg.det(np.linalg.inv(mTm(m)))}")
+    # print(f"det((m'm)^-1)                            = {np.linalg.det(np.linalg.inv(mTm(m)))}")
     print(f"det(mm')                                 = {np.linalg.det(mmT(m))}")
     msg = "det((mm')^-1)                            = "
-    try:
-        det_invert = np.linalg.det(np.linalg.inv(mmT(m)))
-        print(msg, det_invert)  # blows up because mm' is singular
-    except Exception as e:
-        print(f"{msg}Could not find det((mm')^-1. Error = {e}")
+    # try:
+    #     det_invert = np.linalg.det(np.linalg.inv(mmT(m)))
+    #     print(msg, det_invert)  # blows up because mm' is singular
+    # except Exception as e:
+    #     print(f"{msg}Could not find det((mm')^-1. Error = {e}")
     print(f"det(standardized(m) * standardized(m).T) = {np.linalg.det(mmT(standardize(m)))}")
     print(f"det(standardized(m m.T)                  = {np.linalg.det(standardize(mmT(m)))}")
+    print(f"det(standardized(m).T * standardized(m)) = {np.linalg.det(mTm(standardize(m)))}")
+    print(f"det(standardized(m.T m)                  = {np.linalg.det(standardize(mTm(m)))}")
 
 
 def mTm(m):
@@ -49,13 +51,17 @@ def det_of_square_1hot_matrix(drop_last: bool):
                                              n_rows=n_rows,
                                              n_categories=n_categories,
                                              n_cardinality=5)
-    print(f"determinant(m)   = {np.linalg.det(square_matrix)} for matrix of shape {np.shape(square_matrix)}")
-    print(f"determinant(mTm) = {np.linalg.det(mTm(square_matrix))} for matrix of shape {np.shape(square_matrix)}")
+    shape = np.shape(square_matrix)
+    print(f"determinant(m)   = {np.linalg.det(square_matrix)} for matrix of shape {shape}")
+    print(f"determinant(m'm) = {np.linalg.det(mTm(square_matrix))} for matrix of shape {shape}")
 
 
 def invert_and_standardized_1hot(drop_last):
     print(f"\ndrop_last={drop_last}")
-    m = make_fake_1hot_encodings(drop_last=drop_last)
+    m = make_fake_1hot_encodings(n_rows=100,
+                                 n_categories=3,
+                                 n_cardinality=4,
+                                 drop_last=drop_last)
     invert_and_standardize(m)
 
 
@@ -76,14 +82,14 @@ def coincidentally_square_1hot(drop_last: bool,
     shape = np.shape(m)
     assert shape[0] == shape[1]
     print(f"\ncoincidentally square 1-hot matrix {shape} with drop_last={drop_last}")
-    print(f"det(mmT) = {np.linalg.det(mmT(m))}")
+    print(f"det(m'm) = {np.linalg.det(mTm(m))}")
 
 
 def random_matrix():
     print("\nrandom matrix")
     m = np.random.rand(100, 100)
     print(f"det(m)   = {np.linalg.det(m)}")
-    print(f"det(mmT) = {np.linalg.det(mmT(m))}")
+    print(f"det(m'm) = {np.linalg.det(mTm(m))}")
 
 
 if __name__ == "__main__":
@@ -98,6 +104,6 @@ if __name__ == "__main__":
     coincidentally_square_1hot(True, ((n_categories * (n_cardinality - 1)) + 1), n_cardinality, n_categories)
     coincidentally_square_1hot(False, ((n_categories * n_cardinality) + 1), n_cardinality, n_categories)
 
-    det_of_square_1hot_matrix(False)
     det_of_square_1hot_matrix(True)
+    det_of_square_1hot_matrix(False)
     random_matrix()
