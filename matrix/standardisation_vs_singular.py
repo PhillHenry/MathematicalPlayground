@@ -1,5 +1,6 @@
 import numpy as np
-
+import statsmodels.api as sm
+import pandas as pd
 from data.one_hot_encodings import make_fake_1hot_encodings, make_y
 
 
@@ -92,7 +93,55 @@ def random_matrix():
     print(f"det(m'm) = {np.linalg.det(mTm(m))}")
 
 
+def fit_model(pandas_inputs, outcomes: np.ndarray):
+    inputs = sm.add_constant(pandas_inputs)
+    model = sm.GLM(outcomes, inputs, family=sm.families.Binomial())
+    results = model.fit()  #method='bfgs')
+    return results
+
+
+def log_regression(drop_last):
+    print(f"\ndrop_last={drop_last}")
+    m = make_fake_1hot_encodings(n_rows=100,
+                                 n_categories=3,
+                                 n_cardinality=4,
+                                 drop_last=drop_last)
+    inputs = numpy_to_pandas(m)
+    ys = make_y(m, error=False)
+    median = np.median(ys)
+
+    def f(x):
+        if x > median:
+            return 1
+        else:
+            return 0
+
+    outcomes = []
+    for y in ys:
+        outcomes.append([f(y)])
+    outcomes = np.asarray(outcomes)
+    print(np.shape(outcomes))
+    # outcomes = np.array(map(f, outcomes))
+    # print(np.shape(outcomes))
+    outcomes = numpy_to_pandas(outcomes)
+    fit_model(inputs, outcomes)
+
+
+def numpy_to_pandas(m):
+    shape = np.shape(m)
+    if len(shape) == 2:
+        n_rows, n_columns = shape
+    else:
+        n_rows = shape[0]
+        n_columns = 0
+    inputs = pd.DataFrame(data=m,
+                          index=np.array(range(1, n_rows + 1)),
+                          columns=np.array(range(1, n_columns + 1)))
+    return inputs
+
+
 if __name__ == "__main__":
+    log_regression(True)
     invert_and_standardized_1hot(drop_last=True)
     invert_and_standardized_1hot(drop_last=False)
 
