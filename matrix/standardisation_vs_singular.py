@@ -120,11 +120,11 @@ def log_regression(drop_last):
     for y in ys:
         outcomes.append([f(y)])
     outcomes = np.asarray(outcomes)
-    print(np.shape(outcomes))
-    # outcomes = np.array(map(f, outcomes))
-    # print(np.shape(outcomes))
     outcomes = numpy_to_pandas(outcomes)
-    fit_model(inputs, outcomes)
+    try:
+        fit_model(inputs, outcomes)
+    except Exception as e:
+        print(e)
 
 
 def numpy_to_pandas(m):
@@ -142,6 +142,7 @@ def numpy_to_pandas(m):
 
 if __name__ == "__main__":
     log_regression(True)
+    log_regression(False)
     invert_and_standardized_1hot(drop_last=True)
     invert_and_standardized_1hot(drop_last=False)
 
