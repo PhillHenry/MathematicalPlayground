@@ -16,7 +16,7 @@ def invert_and_standardize(m):
     Formula for calculating the co-efficients in a linear regression is:
     β=(X′X)−1X′Y
     '''
-    print(f"det((m'm))                               = {np.linalg.det(mTm(m))}")
+    print(f"det(m'm)                                 = {np.linalg.det(mTm(m))}")
     # print(f"det((m'm)^-1)                            = {np.linalg.det(np.linalg.inv(mTm(m)))}")
     print(f"det(mm')                                 = {np.linalg.det(mmT(m))}")
     msg = "det((mm')^-1)                            = "
