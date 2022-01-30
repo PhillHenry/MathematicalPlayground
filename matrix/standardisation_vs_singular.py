@@ -82,7 +82,7 @@ def coincidentally_square_1hot(drop_last: bool,
                                                n_rows=n_rows))
     shape = np.shape(m)
     assert shape[0] == shape[1]
-    print(f"\ncoincidentally square 1-hot matrix {shape} with drop_last={drop_last}")
+    print(f"\ncoincidentally square 1-hot matrix {shape} (including the results column) with drop_last={drop_last}")
     print(f"det(m'm)    = {np.linalg.det(mTm(m))}")
     add_random_diagonal(m)
 
