@@ -20,7 +20,6 @@ def invert_and_standardize(m):
     print(f"det(m'm)                                 = {np.linalg.det(mTm(m))}")
     # print(f"det((m'm)^-1)                            = {np.linalg.det(np.linalg.inv(mTm(m)))}")
     print(f"det(mm')                                 = {np.linalg.det(mmT(m))}")
-    msg = "det((mm')^-1)                            = "
     # try:
     #     det_invert = np.linalg.det(np.linalg.inv(mmT(m)))
     #     print(msg, det_invert)  # blows up because mm' is singular
@@ -55,6 +54,7 @@ def det_of_square_1hot_matrix(drop_last: bool):
     shape = np.shape(square_matrix)
     print(f"determinant(m)   = {np.linalg.det(square_matrix)} for matrix of shape {shape}")
     print(f"determinant(m'm) = {np.linalg.det(mTm(square_matrix))} for matrix of shape {shape}")
+    add_random_diagonal(square_matrix)
 
 
 def invert_and_standardized_1hot(drop_last):
@@ -83,7 +83,16 @@ def coincidentally_square_1hot(drop_last: bool,
     shape = np.shape(m)
     assert shape[0] == shape[1]
     print(f"\ncoincidentally square 1-hot matrix {shape} with drop_last={drop_last}")
-    print(f"det(m'm) = {np.linalg.det(mTm(m))}")
+    print(f"det(m'm)    = {np.linalg.det(mTm(m))}")
+    add_random_diagonal(m)
+
+
+def add_random_diagonal(m):
+    shape = np.shape(m)
+    s = np.zeros(shape)
+    np.fill_diagonal(s, np.random.randn(shape[0]))
+    print(
+        f"det(mSm')   = {np.linalg.det(np.dot(m, np.dot(s, m.transpose())))} where S is a diagonal matrix of random values")
 
 
 def random_matrix():
@@ -101,7 +110,7 @@ def fit_model(pandas_inputs, outcomes: np.ndarray):
 
 
 def log_regression(drop_last):
-    print(f"\ndrop_last={drop_last}")
+    print(f"\nApplying logistic regression to random, 1-hot encoded matrix. drop_last={drop_last}")
     m = make_fake_1hot_encodings(n_rows=100,
                                  n_categories=3,
                                  n_cardinality=4,
@@ -141,8 +150,8 @@ def numpy_to_pandas(m):
 
 
 if __name__ == "__main__":
-    log_regression(True)
-    log_regression(False)
+    log_regression(drop_last=True)
+    log_regression(drop_last=False)
     invert_and_standardized_1hot(drop_last=True)
     invert_and_standardized_1hot(drop_last=False)
 
