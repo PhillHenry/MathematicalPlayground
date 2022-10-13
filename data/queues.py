@@ -32,7 +32,9 @@ class Board:
                             new_y = y + 1
                             self.board[x][new_y] = self.board[x][new_y] + 1
                             self.board[x][y] = count - 1
-                        self.transitions[new_x][new_y] = self.transitions[new_x][new_y] + 1
+                        old_index = (width * x) + y
+                        new_index = (width * new_x) + new_y
+                        self.transitions[old_index][new_index] = self.transitions[old_index][new_index] + 1
         self.handle_end_states(height, width)
         return self
 
