@@ -34,11 +34,16 @@ class Board:
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
+    np.set_printoptions(precision=3)
+    np.set_printoptions(suppress=True)
     board = Board(5, 20)
     n_plots = 5
     fig, plots = plt.subplots(n_plots)
     for plot in plots:
-        plot.imshow(board.next_move().board, cmap="hot", interpolation='nearest')
+        m = board.next_move().board
+        eigen_vals, eigen_vecs_as_columns = np.linalg.eig(m)
+        print(f"eigen values = {eigen_vals}\nEigenVectors:\n{eigen_vecs_as_columns}")
+        plot.imshow(m, cmap="hot", interpolation='nearest')
         plot.set_yticklabels([])
         plot.set_xticklabels([])
     plt.show()
