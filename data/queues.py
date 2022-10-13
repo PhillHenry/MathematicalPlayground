@@ -26,7 +26,14 @@ class Board:
                         elif self.heads() and y < height - 1:
                             self.board[x][y + 1] = self.board[x][y + 1] + 1
                             self.board[x][y] = count - 1
+        self.handle_end_states(height, width)
         return self
+
+    def handle_end_states(self, height, width):
+        num_end = self.board[width - 1][height - 1]
+        if num_end > 0:
+            self.board[width - 1][height - 1] = num_end - 1
+            self.board[0][0] = self.board[0][0] + 1
 
     def heads(self):
         return random.random() > 0.5
@@ -37,20 +44,25 @@ if __name__ == "__main__":
     from matplotlib.animation import FuncAnimation
     np.set_printoptions(precision=3)
     np.set_printoptions(suppress=True)
-    board = Board(5, 20)
+    board = Board(10, 20)
 
     fig, ax = plt.subplots()
-    ln = ax.imshow(board.next_move().board, cmap="hot", interpolation='nearest')
+    ln = ax.imshow(board.board, cmap="hot", interpolation='nearest')
 
     def init():
+        print("init")
         ax.set_yticklabels([])
         ax.set_xticklabels([])
         return ln,
 
     def update(frame):
-        ln = ax.imshow(board.next_move().board, cmap="hot", interpolation='nearest')
+        m = board.next_move().board
+        eigen_vals, eigen_vecs_as_columns = np.linalg.eig(m)
+        print(f"{frame} eigen values = {list(sorted(eigen_vals))}")
+        # print("EigenVectors:\n{eigen_vecs_as_columns}")
+        ln = ax.imshow(m, cmap="hot", interpolation='nearest')
         return ln,
 
-    ani = FuncAnimation(fig, update, frames=range(20), init_func=init, blit=True)
+    ani = FuncAnimation(fig, update, frames=10, init_func=init, blit=True)
 
     plt.show()
