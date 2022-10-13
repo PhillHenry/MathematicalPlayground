@@ -12,6 +12,7 @@ class Board:
     def initial_dispositions(self):
         self.board = np.zeros((self.n_states, self.n_states), dtype=int)
         self.board[0][0] = self.n_counters
+        self.transitions = np.zeros((self.n_states ** 2, self.n_states ** 2), dtype=int)
 
     def next_move(self):
         width = self.board.shape[0]
@@ -21,12 +22,17 @@ class Board:
                 for n in range(self.board[x][y]):
                     if self.heads():
                         count = self.board[x][y]
+                        new_x = x
+                        new_y = y
                         if self.heads() and x < width - 1:
-                            self.board[x + 1][y] = self.board[x + 1][y] + 1
+                            new_x = x + 1
+                            self.board[new_x][y] = self.board[new_x][y] + 1
                             self.board[x][y] = count - 1
                         elif self.heads() and y < height - 1:
-                            self.board[x][y + 1] = self.board[x][y + 1] + 1
+                            new_y = y + 1
+                            self.board[x][new_y] = self.board[x][new_y] + 1
                             self.board[x][y] = count - 1
+                        self.transitions[new_x][new_y] = self.transitions[new_x][new_y] + 1
         self.handle_end_states(height, width)
         return self
 
@@ -69,3 +75,8 @@ if __name__ == "__main__":
     ani = FuncAnimation(fig, update, frames=200, init_func=init, blit=True)
 
     plt.show()
+
+    print("\nTransitions:")
+    eigen_vals, eigen_vecs_as_columns = np.linalg.eig(board.transitions)
+    print(f"Eigen values = {np.sort(eigen_vals)}")
+    print(f"Eigen Vectors:\n{eigen_vecs_as_columns}")
