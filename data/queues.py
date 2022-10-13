@@ -45,7 +45,8 @@ if __name__ == "__main__":
     from matplotlib.animation import FuncAnimation
     np.set_printoptions(precision=3)
     np.set_printoptions(suppress=True)
-    board = Board(10, 20)
+    n_counters = 20
+    board = Board(10, n_counters)
 
     fig, ax = plt.subplots()
     ln = ax.imshow(board.board, cmap="hot", interpolation='nearest')
@@ -62,7 +63,7 @@ if __name__ == "__main__":
         eigen_vals, eigen_vecs_as_columns = np.linalg.eig(m)
         print(f"{frame} eigen values = {np.sort(eigen_vals)}")
         # print("EigenVectors:\n{eigen_vecs_as_columns}")
-        ln = ax.imshow(m, cmap="hot", interpolation='nearest')
+        ln = ax.imshow(m, cmap="hot", interpolation='nearest', vmin=0, vmax=n_counters//4)
         return ln,
 
     ani = FuncAnimation(fig, update, frames=200, init_func=init, blit=True)
