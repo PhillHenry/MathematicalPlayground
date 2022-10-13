@@ -5,11 +5,12 @@ import random as random
 class Board:
 
     def __init__(self, n_states, n_counters):
-        self.board = np.zeros((n_states, n_states), dtype=int)
+        self.n_states = n_states
         self.n_counters = n_counters
         self.initial_dispositions()
 
     def initial_dispositions(self):
+        self.board = np.zeros((self.n_states, self.n_states), dtype=int)
         self.board[0][0] = self.n_counters
 
     def next_move(self):
@@ -51,6 +52,7 @@ if __name__ == "__main__":
 
     def init():
         print("init")
+        board.initial_dispositions()
         ax.set_yticklabels([])
         ax.set_xticklabels([])
         return ln,
@@ -58,11 +60,11 @@ if __name__ == "__main__":
     def update(frame):
         m = board.next_move().board
         eigen_vals, eigen_vecs_as_columns = np.linalg.eig(m)
-        print(f"{frame} eigen values = {list(sorted(eigen_vals))}")
+        print(f"{frame} eigen values = {np.sort(eigen_vals)}")
         # print("EigenVectors:\n{eigen_vecs_as_columns}")
         ln = ax.imshow(m, cmap="hot", interpolation='nearest')
         return ln,
 
-    ani = FuncAnimation(fig, update, frames=10, init_func=init, blit=True)
+    ani = FuncAnimation(fig, update, frames=200, init_func=init, blit=True)
 
     plt.show()
