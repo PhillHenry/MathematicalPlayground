@@ -52,6 +52,10 @@ class Board:
     def heads(self):
         return random.random() > 0.5
 
+    def probability_matrix(self):
+        totals = self.transitions.sum(axis=0)
+        return self.transitions / totals
+
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
