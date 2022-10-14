@@ -4,9 +4,13 @@ import random as random
 
 class Board:
 
-    def __init__(self, n_states, n_counters):
+    def __init__(self, n_states, n_counters, n_max=None):
         self.n_states = n_states
         self.n_counters = n_counters
+        if n_max is None:
+            self.n_max = n_counters
+        else:
+            self.n_max = n_max
         self.initial_dispositions()
 
     def initial_dispositions(self):
@@ -24,17 +28,18 @@ class Board:
                         count = self.board[x][y]
                         new_x = x
                         new_y = y
-                        if self.heads() and x < width - 1:
+                        if self.heads() and x < width - 1 and self.board[x + 1][y] <= self.n_max:
                             new_x = x + 1
                             self.board[new_x][y] = self.board[new_x][y] + 1
                             self.board[x][y] = count - 1
-                        elif self.heads() and y < height - 1:
+                        elif self.heads() and y < height - 1 and self.board[x][y + 1] <= self.n_max:
                             new_y = y + 1
                             self.board[x][new_y] = self.board[x][new_y] + 1
                             self.board[x][y] = count - 1
                         old_index = (width * x) + y
                         new_index = (width * new_x) + new_y
-                        self.transitions[old_index][new_index] = self.transitions[old_index][new_index] + 1
+                        self.transitions[old_index][new_index] = self.transitions[old_index][
+                                                                     new_index] + 1
         self.handle_end_states(height, width)
         return self
 
@@ -51,6 +56,7 @@ class Board:
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from matplotlib.animation import FuncAnimation
+
     np.set_printoptions(precision=3)
     np.set_printoptions(suppress=True)
     n_counters = 20
@@ -59,6 +65,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
     ln = ax.imshow(board.board, cmap="hot", interpolation='nearest')
 
+
     def init():
         print("init")
         board.initial_dispositions()
@@ -66,13 +73,15 @@ if __name__ == "__main__":
         ax.set_xticklabels([])
         return ln,
 
+
     def update(frame):
         m = board.next_move().board
         eigen_vals, eigen_vecs_as_columns = np.linalg.eig(m)
         print(f"{frame} eigen values = {np.sort(eigen_vals)}")
         # print("EigenVectors:\n{eigen_vecs_as_columns}")
-        ln = ax.imshow(m, cmap="hot", interpolation='nearest', vmin=0, vmax=n_counters//4)
+        ln = ax.imshow(m, cmap="hot", interpolation='nearest', vmin=0, vmax=n_counters // 4)
         return ln,
+
 
     ani = FuncAnimation(fig, update, frames=200, init_func=init, blit=True)
 

@@ -12,7 +12,7 @@ def print_sorted_eigens(eigens):
 
 def play_game() -> Board:
     n_counters = 20
-    board = Board(5, n_counters)
+    board = Board(5, n_counters, n_counters // 5)
     for _ in range(1000):
         board = board.next_move()
     return board
