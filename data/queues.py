@@ -56,6 +56,15 @@ class Board:
         totals = self.transitions.sum(axis=0)
         return self.transitions / totals
 
+    def adjacency_matrix(self):
+        def one_or_zero(x: int) -> int:
+            if x == 0:
+                return 0
+            else:
+                return 1
+        elements = [one_or_zero(x) for xs in self.transitions.tolist() for x in xs]
+        return np.array(elements).reshape(self.transitions.shape)
+
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
