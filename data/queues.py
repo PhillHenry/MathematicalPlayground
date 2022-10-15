@@ -54,6 +54,9 @@ class Board:
 
     def probability_matrix(self):
         totals = self.transitions.sum(axis=0)
+        for i, element in enumerate(totals):
+            if element == 0:
+                totals[i] = 1
         return self.transitions / totals
 
     def adjacency_matrix(self):
@@ -71,6 +74,9 @@ class Board:
         for i, row in enumerate(a):
             d[i][i] = sum(row)
         return d
+
+    def laplacian(self):
+        return self.degrees() - self.adjacency_matrix()
 
 
 if __name__ == "__main__":

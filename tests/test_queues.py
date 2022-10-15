@@ -26,6 +26,12 @@ def check_total_probabilities(board: Board):
     assert np.isclose(totals, expected).all()
 
 
+def test_probability_matrix_of_zeros():
+    board = create_board()
+    p = board.probability_matrix()
+    assert p.all() == False
+
+
 def test_degrees():
     d = board_after_transitions().degrees()
     for i in range(d.shape[0]):
@@ -56,10 +62,15 @@ def test_probability_matrix():
 
 
 def board_after_transitions():
+    board = create_board()
+    board = run_game(board)
+    return board
+
+
+def create_board():
     board_size = 5
     n_counters = 50
     board = Board(board_size, n_counters)
-    board = run_game(board)
     return board
 
 
