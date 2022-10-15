@@ -27,17 +27,17 @@ def check_total_probabilities(board: Board):
 
 
 def test_counters_reach_end():
-    n_states = 5
+    board_size = 5
     n_counters = 20
-    board = BoardIgnoringEndStates(n_states, n_counters)
+    board = BoardIgnoringEndStates(board_size, n_counters)
     board = run_game(board)
-    assert board.board[n_states - 1][n_states - 1] == n_counters
+    assert board.board[board_size - 1][board_size - 1] == n_counters
 
 
 def test_probability_matrix():
-    n_states = 5
+    board_size = 5
     n_counters = 50
-    board = Board(n_states, n_counters)
+    board = Board(board_size, n_counters)
     board = run_game(board)
     check_total_probabilities(board)
 
