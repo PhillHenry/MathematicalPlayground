@@ -26,9 +26,18 @@ def check_total_probabilities(board: Board):
     assert np.isclose(totals, expected).all()
 
 
+def test_degrees():
+    d = board_after_transitions().degrees()
+    for i in range(d.shape[0]):
+        for j in range(d.shape[1]):
+            if i != j:
+                assert d[i][j] == 0
+            else:
+                assert d[i][j] > 0
+
+
 def test_adjacency_matrix():
-    board = board_after_transitions()
-    a = board.adjacency_matrix()
+    a = board_after_transitions().adjacency_matrix()
     elements = [x for xs in a.tolist() for x in xs]
     assert set(elements) == set([1, 0])
 

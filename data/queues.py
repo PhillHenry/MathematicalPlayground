@@ -65,6 +65,13 @@ class Board:
         elements = [one_or_zero(x) for xs in self.transitions.tolist() for x in xs]
         return np.array(elements).reshape(self.transitions.shape)
 
+    def degrees(self):
+        a = self.adjacency_matrix()
+        d = np.zeros(a.shape, dtype=int)
+        for i, row in enumerate(a):
+            d[i][i] = sum(row)
+        return d
+
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
