@@ -5,14 +5,14 @@ from data.queues import Board
 def print_sorted_eigens(eigens):
     sorted_vals, sorted_vecs = zip(*eigens)
     print(f"Eigen values = {sorted_vals}")
-    print(f"Eigen Vectors:")
-    for vec in sorted_vecs:
-        print(vec)
+    # print(f"Eigen Vectors:")
+    # for vec in sorted_vecs:
+    #     print(vec)
 
 
 def play_game() -> Board:
-    n_counters = 20
-    board = Board(5, n_counters, n_counters // 5)
+    n_counters = 40
+    board = Board(5, n_counters, n_counters//20)
     for _ in range(1000):
         board = board.next_move()
     return board

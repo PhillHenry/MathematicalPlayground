@@ -21,22 +21,22 @@ class Board:
     def next_move(self):
         width = self.board.shape[0]
         height = self.board.shape[1]
-        for x in range(width):
-            for y in range(height):
-                for n in range(self.board[x][y]):
+        for y in range(width):
+            for x in range(height):
+                for n in range(self.board[y][x]):
                     if self.heads():
-                        count = self.board[x][y]
-                        new_x = x
-                        new_y = y
-                        if self.heads() and x < width - 1 and self.board[x + 1][y] <= self.n_max:
-                            new_x = x + 1
-                            self.board[new_x][y] = self.board[new_x][y] + 1
-                            self.board[x][y] = count - 1
-                        elif self.heads() and y < height - 1 and self.board[x][y + 1] <= self.n_max:
-                            new_y = y + 1
-                            self.board[x][new_y] = self.board[x][new_y] + 1
-                            self.board[x][y] = count - 1
-                        old_index = (width * x) + y
+                        count = self.board[y][x]
+                        new_x = y
+                        new_y = x
+                        if self.heads() and y < width - 1 and self.board[y + 1][x] <= self.n_max:
+                            new_x = y + 1
+                            self.board[new_x][x] = self.board[new_x][x] + 1
+                            self.board[y][x] = count - 1
+                        elif self.heads() and x < height - 1 and self.board[y][x + 1] <= self.n_max:
+                            new_y = x + 1
+                            self.board[y][new_y] = self.board[y][new_y] + 1
+                            self.board[y][x] = count - 1
+                        old_index = (width * y) + x
                         new_index = (width * new_x) + new_y
                         self.transitions[old_index][new_index] = self.transitions[old_index][
                                                                      new_index] + 1
