@@ -4,8 +4,8 @@ import random as random
 
 class Board:
 
-    def __init__(self, n_states, n_counters, n_max=None):
-        self.n_states = n_states
+    def __init__(self, board_size, n_counters, n_max=None):
+        self.board_size = board_size
         self.n_counters = n_counters
         if n_max is None:
             self.n_max = n_counters
@@ -14,9 +14,9 @@ class Board:
         self.initial_dispositions()
 
     def initial_dispositions(self):
-        self.board = np.zeros((self.n_states, self.n_states), dtype=int)
+        self.board = np.zeros((self.board_size, self.board_size), dtype=int)
         self.board[0][0] = self.n_counters
-        self.transitions = np.zeros((self.n_states ** 2, self.n_states ** 2), dtype=int)
+        self.transitions = np.zeros((self.board_size ** 2, self.board_size ** 2), dtype=int)
 
     def next_move(self):
         width = self.board.shape[0]
