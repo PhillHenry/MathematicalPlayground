@@ -20,7 +20,7 @@ def play_game() -> Board:
 
 def transition_eigens(board: Board):
     print("\nTransitions:")
-    m = board.probability_matrix()
+    m = board.laplacian()
     eigen_vals, eigen_vecs_as_columns = np.linalg.eig(m)
     eigens = sorted(zip(eigen_vals, eigen_vecs_as_columns), key=lambda x: -x[0])
     print_sorted_eigens(eigens)

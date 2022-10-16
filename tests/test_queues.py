@@ -26,6 +26,23 @@ def check_total_probabilities(board: Board):
     assert np.isclose(totals, expected).all()
 
 
+def check_laplacian_invariants(board: Board):
+    m = board.laplacian()
+    height, width = m.shape
+    for i in range(height):
+        for j in range(width):
+            element = m[i][j]
+            if i != j:
+                assert element == 0 or element == -1
+            else:
+                assert element >= 0
+
+
+def test_laplacian():
+    board = create_board()
+    check_laplacian_invariants(board)
+
+
 def test_probability_matrix_of_zeros():
     board = create_board()
     p = board.probability_matrix()
