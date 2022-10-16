@@ -38,9 +38,10 @@ def check_laplacian_invariants(board: Board):
                 assert element >= 0
 
 
-def test_laplacian():
+def test_graph_laplacian():
     board = create_board()
     check_laplacian_invariants(board)
+    check_laplacian_invariants(run_game(board))
 
 
 def test_probability_matrix_of_zeros():
