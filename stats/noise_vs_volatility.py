@@ -44,26 +44,31 @@ def make_comparisons(n_observations: int):
     return comparisons
 
 
-def do_compare(n_observations: int):
+def do_compare(n_observations: int, summary_to_metric_fn):
     comparisons = make_comparisons(n_observations)
     chunked = []
     granular = []
     for comparison in comparisons:
-        chunked.append(comparison.chunked.rmse)
-        granular.append(comparison.granular.rmse)
+        chunked.append(summary_to_metric_fn(comparison.chunked))
+        granular.append(summary_to_metric_fn(comparison.granular))
     return chunked, granular
+
+
+def std_dev_to_mean_ratio_of(x: Summary) -> float:
+    return x.std / x.mean
 
 
 def do_experiment():
     n_observations = 1000
-    chunked, granular = do_compare(n_observations)
+    chunked, granular = do_compare(n_observations, std_dev_to_mean_ratio_of)
     print(f"In {n_observations} observations:")
-    print(f"Chunks RMSE:   {mean_and_std_of(chunked)}")
-    print(f"Granular RMSE: {mean_and_std_of(granular)}")
+    print(f"Chunks:   {mean_and_std_of(chunked)}")
+    print(f"Granular: {mean_and_std_of(granular)}")
     # the std dev of the RMSE is larger for chunks because the underlying numbers are larger
     # however, the error is (roughly) the same
-    plt.plot(range(n_observations), chunked, color='r')
-    plt.plot(range(n_observations), granular, color='b')
+    plt.plot(range(n_observations), chunked, color='r', label="chunked")
+    plt.plot(range(n_observations), granular, color='b', label="granular")
+    plt.legend(loc="upper left")
     plt.show()
 
 
