@@ -25,12 +25,12 @@ def summarize(xs: list):
 
 def compare() -> Comparison:
     n_chunks = 14
-    xs = np.random.normal(10, 2, n_chunks * 24)
+    granular = np.random.normal(10, 2, n_chunks * 24)
     chunked = []
-    chunks = np.split(xs, n_chunks)
+    chunks = np.split(granular, n_chunks)
     for chunk in chunks:
         chunked.append(np.sum(chunk))
-    return Comparison(summarize(xs), summarize(chunked))
+    return Comparison(summarize(granular), summarize(chunked))
 
 
 def mean_and_std_of(xs: list) -> str:
@@ -48,5 +48,8 @@ if __name__ == "__main__":
     print(f"In {n_observations} observations:")
     print(f"Chunks:   {mean_and_std_of(rmse_chunked)}")
     print(f"Granular: {mean_and_std_of(rmse_granular)}")
-    # plt.plot(range(len(xs)), xs)
-    # plt.show()
+    # the std dev of the RMSE is larger for chunks because the underlying numbers are larger
+    # however, the error is (roughly) the same
+    plt.plot(range(n_observations), rmse_chunked, color='r')
+    plt.plot(range(n_observations), rmse_granular, color='b')
+    plt.show()
