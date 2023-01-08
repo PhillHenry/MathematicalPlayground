@@ -34,22 +34,38 @@ def compare() -> Comparison:
 
 
 def mean_and_std_of(xs: list) -> str:
-    return "mean RMSE = {:>10f}, std = {:>10f}".format(np.mean(xs), np.std(xs))
+    return "mean = {:>10f}, std = {:>10f}".format(np.mean(xs), np.std(xs))
+
+
+def make_comparisons(n_observations: int):
+    comparisons = []
+    for _ in range(n_observations):
+        comparisons.append(compare())
+    return comparisons
+
+
+def do_compare(n_observations: int):
+    comparisons = make_comparisons(n_observations)
+    chunked = []
+    granular = []
+    for comparison in comparisons:
+        chunked.append(comparison.chunked.rmse)
+        granular.append(comparison.granular.rmse)
+    return chunked, granular
+
+
+def do_experiment():
+    n_observations = 1000
+    chunked, granular = do_compare(n_observations)
+    print(f"In {n_observations} observations:")
+    print(f"Chunks RMSE:   {mean_and_std_of(chunked)}")
+    print(f"Granular RMSE: {mean_and_std_of(granular)}")
+    # the std dev of the RMSE is larger for chunks because the underlying numbers are larger
+    # however, the error is (roughly) the same
+    plt.plot(range(n_observations), chunked, color='r')
+    plt.plot(range(n_observations), granular, color='b')
+    plt.show()
 
 
 if __name__ == "__main__":
-    n_observations = 1000
-    rmse_chunked = []
-    rmse_granular = []
-    for _ in range(n_observations):
-        comparison = compare()
-        rmse_chunked.append(comparison.chunked.rmse)
-        rmse_granular.append(comparison.granular.rmse)
-    print(f"In {n_observations} observations:")
-    print(f"Chunks:   {mean_and_std_of(rmse_chunked)}")
-    print(f"Granular: {mean_and_std_of(rmse_granular)}")
-    # the std dev of the RMSE is larger for chunks because the underlying numbers are larger
-    # however, the error is (roughly) the same
-    plt.plot(range(n_observations), rmse_chunked, color='r')
-    plt.plot(range(n_observations), rmse_granular, color='b')
-    plt.show()
+    do_experiment()
