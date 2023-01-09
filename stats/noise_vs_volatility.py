@@ -30,6 +30,7 @@ def compare() -> Comparison:
     chunks = np.split(granular, n_chunks)
     for chunk in chunks:
         chunked.append(np.sum(chunk))
+    granular = granular[0:len(chunks)]
     return Comparison(summarize(granular), summarize(chunked))
 
 
@@ -55,7 +56,7 @@ def do_compare(n_observations: int, summary_to_metric_fn):
 
 
 def std_dev_to_mean_ratio_of(x: Summary) -> float:
-    return x.std / x.mean
+    return x.rmse / x.mean
 
 
 def do_experiment():
