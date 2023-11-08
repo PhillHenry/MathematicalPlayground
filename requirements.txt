@@ -1,5 +1,5 @@
 ipython>=2.0
-matplotlib>=1.2.1
+matplotlib>=3.8.1
 numpy>=1.7.1
 pymc3>=3.8.0
 pyzmq>=13.1.0
