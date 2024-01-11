@@ -39,7 +39,7 @@ def draw_curve(ax, num_bits):
   ax.set_xlabel('dimension 1')
   ax.set_ylabel('dimension 2')
 
-
+# see https://github.com/PrincetonLIPS/numpy-hilbert-curve/blob/main/README.md
 draw_curve(plt.axes(), 5)
 plt.savefig('/home/henryp/Pictures/example_2d_color.png', bbox_inches='tight')
 plt.show()
