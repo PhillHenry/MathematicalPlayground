@@ -25,10 +25,19 @@ def draw_curve(ax, num_bits):
 
   # Draw. This may be a little slow.
   length = len(hilberts)
+  distances = []
   for ii in range(length-1):
-    ax.plot([locs[ii, 0], locs[ii+1, 0]],
-            [locs[ii, 1], locs[ii+1, 1]],
+    # Note the hilbert library returns *unsigned* ints so turn them to normal ints so we can calculate distance
+    x1 = int(locs[ii, 0])
+    x2 = int(locs[ii + 1, 0])
+    y1 = int(locs[ii, 1])
+    y2 = int(locs[ii + 1, 1])
+    ax.plot([x1, x2],
+            [y1, y2],
             '-', color=cmap(((ii * 5)//length) * 0.2))
+    d = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
+    distances.append(d)
+  print(f"Average steps between adjacent points: {sum(distances)/len(distances)}")
   for x, y in locs:
     plt.plot(x, y, "bx")
   for i in range(int(2 ** num_bits)):
