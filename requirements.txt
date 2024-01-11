@@ -16,3 +16,4 @@ sympy
 hyperopt
 pyspark
 statsmodels
+numpy-hilbert-curve
