@@ -41,5 +41,5 @@ def draw_curve(ax, num_bits):
 
 # see https://github.com/PrincetonLIPS/numpy-hilbert-curve/blob/main/README.md
 draw_curve(plt.axes(), 5)
-plt.savefig('/home/henryp/Pictures/example_2d_color.png', bbox_inches='tight')
+plt.savefig('/home/henryp/Pictures/hilbert_2d.png', bbox_inches='tight')
 plt.show()
