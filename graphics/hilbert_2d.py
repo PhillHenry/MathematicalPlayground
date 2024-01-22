@@ -42,7 +42,7 @@ def draw_curve(ax, num_bits):
     for j in range(int(2 ** num_bits)):
       plt.plot(i, j, "y+")
   ax.set_aspect('equal')
-  ax.set_title("Sparse ")
+  ax.set_title("Hilbert curve over sparsely populated space")
   ax.set_xlabel('dimension 1')
   ax.set_ylabel('dimension 2')
 
